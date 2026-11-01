@@ -8,7 +8,7 @@ from content import T, UI
 DOMAIN = "https://facildata.com"
 FORM_TO = "contact@facildata.com"
 HUBSPOT = "https://meetings-eu1.hubspot.com/dora-facildata/gitex?uuid=48e4abde-2577-4fd7-ac58-deb46a9888b6"
-CHAT_ENDPOINT = os.environ.get("CHAT_ENDPOINT", "")   # URL du worker Cloudflare ; vide = mode démo
+CHAT_ENDPOINT = os.environ.get("CHAT_ENDPOINT", "https://facilia-chat.mathieu-chaplain.workers.dev/")   # URL du worker Cloudflare ; vide = mode démo
 OUT = "dist"
 
 CSS = r"""
