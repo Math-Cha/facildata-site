@@ -11,7 +11,26 @@ HUBSPOT = "https://meetings-eu1.hubspot.com/dora-facildata/gitex?uuid=48e4abde-2
 CHAT_ENDPOINT = os.environ.get("CHAT_ENDPOINT", "https://facilia-chat.mathieu-chaplain.workers.dev/")   # URL du worker Cloudflare ; vide = mode démo
 OUT = "dist"
 
-CSS = r""".vsec{position:relative;background:linear-gradient(180deg,var(--ink) 0 46%,#fff 46%);padding:0 0 70px}
+CSS = r"""nav a{white-space:nowrap}
+.about{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:start}
+.about .lead{margin-top:18px}.about .vision{margin-top:26px;padding:22px 24px;border-left:3px solid var(--o);background:var(--soft);border-radius:0 14px 14px 0;font-weight:600;color:var(--ink);font-size:1.08rem}
+.team{display:grid;gap:14px}
+.mate{display:flex;gap:16px;align-items:center;border:1px solid var(--line);border-radius:18px;padding:18px 20px;background:#fff;transition:.25s}.mate:hover{border-color:var(--o);transform:translateY(-3px)}
+.mate .av{flex:none;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--o),var(--o2));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.mate b{display:block;color:var(--ink);font-size:1.05rem}.mate span{color:var(--mute);font-size:.92rem}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}.facts div{border-radius:16px;background:var(--ink);color:#fff;padding:16px}.facts b{display:block;font-size:1.35rem;color:var(--o2)}.facts span{font-size:.82rem;color:#B6B9C9}
+.backers{margin-top:64px;padding-top:40px;border-top:1px solid var(--line)}
+.backers h3{font-size:1rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);font-weight:700;text-align:center;margin-bottom:26px}
+.logos{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.txtlogo{font-weight:800;font-size:1.3rem;color:var(--ink);letter-spacing:-.02em;text-align:center}
+.logos a{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:1px solid var(--line);border-radius:18px;padding:26px 18px 18px;background:#fff;transition:.25s;min-height:150px}
+.logos a:hover{border-color:var(--ink);transform:translateY(-4px);box-shadow:0 18px 40px rgba(11,16,32,.08)}
+.logos img{max-height:64px;max-width:80%;width:auto;object-fit:contain}
+.logos img[src*="airbus"]{max-height:40px}.logos small{font-size:.78rem;font-weight:700;color:var(--mute);text-align:center}
+.press{display:flex;align-items:center;gap:24px;margin:28px auto 0;max-width:760px;border-radius:18px;padding:18px 24px;background:var(--soft);transition:.25s}.press:hover{background:#FDEBDD}
+.press img{height:44px;width:auto}.press p{margin:0;color:var(--ink);font-weight:600}.press p span{display:block;color:var(--mute);font-weight:500;font-size:.88rem}
+@media(max-width:1000px){.about{grid-template-columns:1fr;gap:32px}.logos{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.logos a{min-height:120px;padding:20px 12px 14px}.logos img{max-height:48px}.press{flex-direction:column;align-items:flex-start;gap:12px}.facts b{font-size:1.1rem}}
+.vsec{position:relative;background:linear-gradient(180deg,var(--ink) 0 46%,#fff 46%);padding:0 0 70px}
 .vsec .wrap{max-width:1040px}
 .vhead{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;color:#fff;padding:56px 0 22px}
 .vhead h2{color:#fff;font-size:clamp(1.5rem,2.6vw,2.1rem);margin:0}.vhead p{margin:0;color:#B6B9C9;max-width:380px;font-size:.98rem}
@@ -51,7 +70,7 @@ nav a{opacity:.85}nav a:hover{opacity:1;color:var(--o)}
 .lang{font-size:.78rem;font-weight:800;padding:6px 10px;border:1px solid currentColor;border-radius:8px;opacity:.7}
 .burger{display:none;background:none;border:0;width:40px;height:40px;cursor:pointer;color:inherit}
 .burger span{display:block;height:2px;background:currentColor;margin:6px 8px;border-radius:2px}
-@media(max-width:1000px){nav{display:none;position:absolute;top:76px;left:0;right:0;background:#fff;color:var(--ink);flex-direction:column;align-items:flex-start;padding:16px 28px 24px;border-bottom:1px solid var(--line);gap:16px}nav.open{display:flex}.burger{display:block}.hd>.btn{display:none}}
+@media(max-width:1120px){nav{display:none;position:absolute;top:76px;left:0;right:0;background:#fff;color:var(--ink);flex-direction:column;align-items:flex-start;padding:16px 28px 24px;border-bottom:1px solid var(--line);gap:16px}nav.open{display:flex}.burger{display:block}.hd>.btn{display:none}}
 @media(min-width:1001px){nav .btn{display:none}}
 /* hero */
 .hero{position:relative;min-height:92vh;display:flex;align-items:center;color:#fff;overflow:hidden;background:var(--ink)}
@@ -615,6 +634,43 @@ def video_block(t,pre):
 <div class="vbox" id="vbox"><video id="fdv" preload="none" playsinline poster="{pre}img/video-{l}.jpg"><source src="{pre}img/video-{l}.mp4" type="video/mp4"></video>
 <button class="vplay" aria-label="{aria}" onclick="var b=document.getElementById('vbox'),v=document.getElementById('fdv');b.classList.add('on');v.controls=true;v.play()"><span><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M7 4.5v15l13-7.5z"/></svg>{btn}</span></button></div></div></section>'''
 
+def about_block(t,pre):
+    fr=t["lang"]=="fr"
+    if fr:
+        k,h2="Qui sommes-nous","Des gens du terrain, au service de ceux qui gèrent."
+        p=("Facildata est née sur le terrain, dans une entreprise de maintenance multitechnique. Chaque jour, on y voyait des équipements oubliés, des contrats mal suivis et des heures perdues à chercher l'information. "
+           "Nos fondateurs viennent du BTP, de l'énergie et des grands chantiers. Ils ont construit l'outil qu'ils auraient voulu avoir.")
+        vis="Notre vision : que chaque bâtiment et chaque équipement ait une voix, pour que les gestionnaires pilotent au lieu de courir."
+        team=[("MC","Mathieu CHAPLAIN","Cofondateur & CEO · ex-BTP et énergie"),("DB","Dora Bourguiba","Cofondatrice · Développement")]
+        facts=[("2021","création"),("Paris · Bordeaux","implantations"),("IA","française et responsable")]
+        bk="Ils nous accompagnent"
+        labels=["Lauréat","Référencé · cartographie 2026","Accompagnement","Airbus Développement","Accompagnement","Groupe Action Logement"]
+        press_t,press_s="Ils parlent de nous","Placéco : « Proptech : Facildata dope à l'IA le carnet de santé des bâtiments »"
+    else:
+        k,h2="About us","Field people, working for those who manage."
+        p=("Facildata was born in the field, inside a multi-technical maintenance company. Every day we saw forgotten equipment, poorly tracked contracts and hours lost looking for information. "
+           "Our founders come from construction, energy and major infrastructure projects. They built the tool they wished they had.")
+        vis="Our vision: give every building and every piece of equipment a voice, so managers can steer instead of chase."
+        team=[("MC","Mathieu CHAPLAIN","Co-founder & CEO · construction and energy background"),("DB","Dora Bourguiba","Co-founder · Business development")]
+        facts=[("2021","founded"),("Paris · Bordeaux","offices"),("AI","French and responsible")]
+        bk="They support us"
+        labels=["Award winner","Listed · 2026 AI map","Support","Airbus Développement","Support","Action Logement group"]
+        press_t,press_s="In the press","Placéco (FR): Facildata boosts the building health record with AI"
+    mates="".join(f'<div class="mate rv"><div class="av">{i}</div><div><b>{n}</b><span>{r}</span></div></div>' for i,n,r in team)
+    fct="".join(f'<div><b>{a}</b><span>{b}</span></div>' for a,b in facts)
+    L=[("reseau-entreprendre-aquitaine","Réseau Entreprendre Aquitaine","https://www.reseau-entreprendre.org/aquitaine/"),
+       ("hub-france-ia","Hub France IA","https://www.cartographie.hub-franceia.fr/startup.html?startup=FACILDATA"),
+       ("totalenergies","TotalEnergies",None),("airbus","Airbus Développement",None),("technowest","Bordeaux Technowest",None),("domofrance","Domofrance",None)]
+    def card(f,alt,href,lab):
+        logo=f'<img src="{pre}img/partners/{f}.png" alt="{alt}" loading="lazy">' if os.path.exists(f"img/partners/{f}.png") else f'<span class="txtlogo">{alt}</span>'
+        inner=f'{logo}<small>{lab}</small>'
+        return f'<a class="rv" href="{href}" target="_blank" rel="noopener">{inner}</a>' if href else f'<a class="rv" role="img" aria-label="{alt}" style="cursor:default">{inner}</a>'
+    logos="".join(card(f,a,h,l) for (f,a,h),l in zip(L,labels))
+    press=f'<a class="press rv" href="https://www.placeco.fr/nouvelle-aquitaine/strategie/article/proptech-facildata-dope-a-lia-le-carnet-de-sante-des-batiments-9359" target="_blank" rel="noopener"><img src="{pre}img/partners/placeco.png" alt="Placéco" loading="lazy"><p>{press_t}<span>{press_s}</span></p></a>'
+    return f'''<section id="equipe"><div class="wrap"><div class="about"><div><div class="kicker">{k}</div><h2>{h2}</h2><p class="lead">{p}</p><div class="vision rv">{vis}</div></div>
+<div class="team">{mates}<div class="facts rv">{fct}</div></div></div>
+<div class="backers"><h3>{bk}</h3><div class="logos">{logos}</div>{press}</div></div></section>'''
+
 def home(t):
     u=UI[t["lang"]]; pre = "../" if t["prefix"] else ""
     kpis="".join(f'<div class="kpi"><b>{a}</b><span>{b}</span></div>' for a,b in t["kpis"])
@@ -642,6 +698,7 @@ def home(t):
 <section id="secteurs"><div class="wrap"><div class="kicker">{t["sectors_kicker"]}</div><h2>{t["sectors_h2"]}</h2><div class="sectors" style="margin-top:36px">{secs}</div></div></section>
 <section class="soft"><div class="wrap chatteaser"><div><div class="kicker">{t["chat_kicker"]}</div><h2>{t["chat_h2"]}</h2><p class="lead">{t["chat_p"]}</p><a class="btn" href="#" data-chat>{I("spark")} {t["cta_chat"]}</a></div>
 <div class="demo rv"><div class="bubble ai">{c["hello"]}</div><div class="bubble me">{demo_q}</div><div class="bubble ai">{c["demo"][1][1]}</div></div></div></section>
+{about_block(t,pre)}
 {final_cta(t)}'''
     return shell(t, t["meta_title"], t["meta_desc"], body, "index.html", "index.html")
 

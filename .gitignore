@@ -1,5 +1,0 @@
-.dev.vars
-.env
-*.key
-node_modules/
-.wrangler/
