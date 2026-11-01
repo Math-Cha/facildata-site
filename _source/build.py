@@ -21,15 +21,15 @@ CSS = r"""nav a{white-space:nowrap}
 .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}.facts div{border-radius:16px;background:var(--ink);color:#fff;padding:16px}.facts b{display:block;font-size:1.35rem;color:var(--o2)}.facts span{font-size:.82rem;color:#B6B9C9}
 .backers{margin-top:64px;padding-top:40px;border-top:1px solid var(--line)}
 .backers h3{font-size:1rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);font-weight:700;text-align:center;margin-bottom:26px}
-.logos{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.txtlogo{font-weight:800;font-size:1.3rem;color:var(--ink);letter-spacing:-.02em;text-align:center}
+.logos{display:flex;flex-wrap:wrap;justify-content:center;gap:14px}.logos a{flex:0 0 calc((100% - 70px)/6);padding:22px 12px 16px}.logos img{max-width:90%}.txtlogo{font-weight:800;font-size:1.3rem;color:var(--ink);letter-spacing:-.02em;text-align:center}
 .logos a{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:1px solid var(--line);border-radius:18px;padding:26px 18px 18px;background:#fff;transition:.25s;min-height:150px}
 .logos a:hover{border-color:var(--ink);transform:translateY(-4px);box-shadow:0 18px 40px rgba(11,16,32,.08)}
 .logos img{max-height:64px;max-width:80%;width:auto;object-fit:contain}
-.logos img[src*="airbus"]{max-height:40px}.logos img[src*="cobas"],.logos img[src*="french-tech"]{max-height:84px}.logos small{font-size:.78rem;font-weight:700;color:var(--mute);text-align:center}
+.logos img[src*="airbus"]{max-height:40px}.logos img[src*="cobas"],.logos img[src*="french-tech"],.logos img[src*="region-"]{max-height:80px}.logos img[src*="region-"]{border-radius:10px}.logos small{font-size:.78rem;font-weight:700;color:var(--mute);text-align:center}
 .presses{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}.ces{flex:none;height:44px;padding:0 14px;border-radius:12px;background:var(--ink);color:#fff;font-weight:800;display:flex;align-items:center;gap:6px;letter-spacing:.02em}.ces em{font-style:normal;color:var(--o2)}
 .press{display:flex;align-items:center;gap:24px;border-radius:18px;padding:18px 24px;background:var(--soft);transition:.25s}.press:hover{background:#FDEBDD}
 .press img{height:44px;width:auto}.press p{margin:0;color:var(--ink);font-weight:600}.press p span{display:block;color:var(--mute);font-weight:500;font-size:.88rem}
-@media(max-width:1000px){.presses{grid-template-columns:1fr}.about{grid-template-columns:1fr;gap:32px}.logos{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1180px){.logos a{flex-basis:calc((100% - 42px)/4)}}@media(max-width:1000px){.logos a{flex-basis:calc((100% - 28px)/3)}}@media(max-width:620px){.logos a{flex-basis:calc((100% - 14px)/2)}}@media(max-width:1000px){.presses{grid-template-columns:1fr}.about{grid-template-columns:1fr;gap:32px}}
 @media(max-width:560px){.logos a{min-height:120px;padding:20px 12px 14px}.logos img{max-height:48px}.press{flex-direction:column;align-items:flex-start;gap:12px}.facts b{font-size:1.1rem}}
 .vsec{position:relative;background:linear-gradient(180deg,var(--ink) 0 46%,#fff 46%);padding:0 0 70px}
 .vsec .wrap{max-width:1040px}
@@ -645,7 +645,7 @@ def about_block(t,pre):
         team=[("MC","Mathieu CHAPLAIN","Cofondateur & CEO · ex-BTP et énergie"),("DB","Dora BOURGUIBA","Cofondatrice · Développement")]
         facts=[("2021","création"),("Paris · Bordeaux","implantations"),("IA","française et responsable")]
         bk="Ils nous accompagnent"
-        labels=["Lauréat","Référencé · cartographie 2026","Accompagnement","Airbus Développement","Accompagnement","Groupe Action Logement","Membre · annuaire","Portrait d'entreprise","Accompagnement"]
+        labels=["Lauréat","Cartographie IA 2026","Accompagnement","Airbus Développement","Accompagnement","Groupe Action Logement","Membre · annuaire","Écosystème","Portrait d'entreprise","Accompagnement","Délégation CES 2026"]
         press_t,press_s="Ils parlent de nous","Placéco : « Proptech : Facildata dope à l'IA le carnet de santé des bâtiments »"
     else:
         k,h2="About us","Field people, working for those who manage."
@@ -655,13 +655,13 @@ def about_block(t,pre):
         team=[("MC","Mathieu CHAPLAIN","Co-founder & CEO · construction and energy background"),("DB","Dora BOURGUIBA","Co-founder · Business development")]
         facts=[("2021","founded"),("Paris · Bordeaux","offices"),("AI","French and responsible")]
         bk="They support us"
-        labels=["Award winner","Listed · 2026 AI map","Support","Airbus Développement","Support","Action Logement group","Member · directory","Company profile","Support"]
+        labels=["Award winner","Listed · 2026 AI map","Support","Airbus Développement","Support","Action Logement group","Member · directory","Ecosystem","Company profile","Support","CES 2026 delegation"]
         press_t,press_s="In the press","Placéco (FR): Facildata boosts the building health record with AI"
     mates="".join(f'<div class="mate rv"><div class="av">{i}</div><div><b>{n}</b><span>{r}</span></div></div>' for i,n,r in team)
     fct="".join(f'<div><b>{a}</b><span>{b}</span></div>' for a,b in facts)
     L=[("reseau-entreprendre-aquitaine","Réseau Entreprendre Aquitaine","https://www.reseau-entreprendre.org/aquitaine/"),
        ("hub-france-ia","Hub France IA","https://www.cartographie.hub-franceia.fr/startup.html?startup=FACILDATA"),
-       ("totalenergies","TotalEnergies",None),("airbus","Airbus Développement",None),("technowest","Bordeaux Technowest",None),("domofrance","Domofrance – Nuit de l'innovation","https://www.domofrance.fr/actualites/nuit-de-linnovation-de-domofrance-innover-pour-batir-les-territoires-de-demain"),("french-tech-bordeaux","La French Tech Bordeaux","https://annuaire.frenchtechbordeaux.com/organisations/facildata"),("ba2e","BA2E – Agence de développement économique","https://ba2e.com/portraits-entreprises/facildata/"),("cobas","COBAS – Pôle économique","https://www.agglo-cobas.fr/pole-economique-cobas/")]
+       ("totalenergies","TotalEnergies",None),("airbus","Airbus Développement",None),("technowest","Bordeaux Technowest",None),("domofrance","Domofrance – Nuit de l'innovation","https://www.domofrance.fr/actualites/nuit-de-linnovation-de-domofrance-innover-pour-batir-les-territoires-de-demain"),("french-tech-bordeaux","La French Tech Bordeaux","https://annuaire.frenchtechbordeaux.com/organisations/facildata"),("french-tech-grand-paris","La French Tech Grand Paris",None),("ba2e","BA2E – Agence de développement économique","https://ba2e.com/portraits-entreprises/facildata/"),("cobas","COBAS – Pôle économique","https://www.agglo-cobas.fr/pole-economique-cobas/"),("region-nouvelle-aquitaine","Région Nouvelle-Aquitaine","https://entreprises.nouvelle-aquitaine.fr/agenda/ces-las-vegas")]
     def card(f,alt,href,lab):
         logo=f'<img src="{pre}img/partners/{f}.png" alt="{alt}" loading="lazy">' if os.path.exists(f"img/partners/{f}.png") else f'<span class="txtlogo">{alt}</span>'
         inner=f'{logo}<small>{lab}</small>'
