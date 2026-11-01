@@ -9,7 +9,10 @@
  document.body.appendChild(box);
  const msgs=box.querySelector('.msgs'),form=box.querySelector('form.in'),inp=form.querySelector('input'),mic=form.querySelector('.mic');
  const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
- const hist=[];let opened=false,n=0,flow=null,busy=false;
+ const hist=[];let opened=false,n=0,flow=null,busy=false,logged=0,leadTag='';
+ const sid=(()=>{try{let s=sessionStorage.getItem('fd_sid');if(!s){s=Math.random().toString(36).slice(2,12)+Date.now().toString(36);sessionStorage.setItem('fd_sid',s)}return s}catch(e){return Math.random().toString(36).slice(2,14)}})();
+ function logConv(){if(!EP||hist.length<2||hist.length===logged)return;logged=hist.length;try{fetch(EP,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({log:true,sid,lang:L.lang,page:location.pathname,lead:leadTag,messages:hist.slice(-40)})}).catch(()=>{})}catch(e){}}
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')logConv()});
  function scroll(){msgs.scrollTop=msgs.scrollHeight}
  function add(t,who){const d=document.createElement('div');d.className='bubble '+who;d.innerHTML=esc(t).replace(/\n/g,'<br>');msgs.appendChild(d);scroll();return d}
  function typing(){const d=document.createElement('div');d.className='bubble ai typing';d.innerHTML='<span></span><span></span><span></span>';msgs.appendChild(d);scroll();return d}
@@ -19,7 +22,7 @@
  function cta(label,onclick){const a=document.createElement('button');a.type='button';a.className='rdv';a.innerHTML=label+' →';a.onclick=onclick;const d=document.createElement('div');d.className='bubble ai';d.appendChild(a);msgs.appendChild(d);scroll()}
  function show(){box.classList.add('open');document.body.classList.add('chat-open')}
  function open(){show();if(!opened){opened=true;add(L.hello,'ai');hist.push({role:'assistant',content:L.hello});cta(L.rdv,startRdv)}setTimeout(()=>inp.focus(),50)}
- function close(){box.classList.remove('open');document.body.classList.remove('chat-open');stopMic()}
+ function close(){box.classList.remove('open');document.body.classList.remove('chat-open');stopMic();logConv()}
  btn.addEventListener('click',()=>box.classList.contains('open')?close():open());
  box.querySelector('.x').addEventListener('click',close);
  document.querySelectorAll('[data-chat]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();open()}));
@@ -46,7 +49,7 @@
   const t=typing();
   try{
    if(!EP){await wait(700+Math.random()*500);t.remove();const a=demo(hist[hist.length-1].content);hist.push({role:'assistant',content:a});add(a,'ai');return {}}
-   const r=await fetch(EP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lang:L.lang,stage:stage||'',messages:hist.slice(-12)})});
+   const r=await fetch(EP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lang:L.lang,sid,page:location.pathname,lead:leadTag,stage:stage||'',messages:hist.slice(-12)})});
    const j=await r.json();t.remove();const a=(j.reply||L.offline).trim();hist.push({role:'assistant',content:a});add(a,'ai');return j
   }catch(e){t.remove();add(L.offline,'ai');return {}}
  }
@@ -57,7 +60,7 @@
  function match(text){const st=R.steps[flow.i];const t=text.toLowerCase();for(const [k,l] of st.opts){const words=l.toLowerCase().split(/[\s,/()…]+/).filter(w=>w.length>3);if(words.some(w=>t.includes(w)))return [k,l]}return null}
  async function answer(k,l,shown){add(shown||l,'me');hist.push({role:'user',content:shown||l});flow.a[R.steps[flow.i].key]=[k,l];flow.i++;
   const a=flow.a;
-  if((a.role&&a.role[0]==='autre')||(a.secteur&&a.secteur[0]==='aucun')){flow.done=true;await say(R.no);return}
+  if((a.role&&a.role[0]==='autre')||(a.secteur&&a.secteur[0]==='aucun')){flow.done=true;leadTag='Hors cible · '+a.role[1]+(a.secteur?' · '+a.secteur[1]:'');await say(R.no);logConv();return}
   if(flow.i<R.steps.length)return ask();
   flow.done=true;
   if(a.horizon[0]==='info'&&a.taille[0]==='s'){await say(R.nurture);leadForm(true);return}
@@ -67,7 +70,7 @@
   f.innerHTML=(light?'':'<input name="nom" required maxlength="80" placeholder="'+F.name+'"><input name="organisation" required maxlength="120" placeholder="'+F.org+'">')+'<input name="email" type="email" required maxlength="120" placeholder="'+F.email+'">'+(light?'':'<input name="telephone" type="tel" maxlength="30" placeholder="'+F.phone+'">')+'<button type="submit">'+F.send+'</button>';
   const d=document.createElement('div');d.className='bubble ai formb';d.appendChild(f);msgs.appendChild(d);scroll();f.querySelector('input').focus();
   f.addEventListener('submit',async e=>{e.preventDefault();const data=Object.fromEntries(new FormData(f));f.querySelectorAll('input,button').forEach(x=>x.disabled=true);
-   const ok=await send(light?'A recontacter (en réflexion)':'RDV qualifié',data);
+   const ok=await send(light?'A recontacter (en réflexion)':'RDV qualifié',data);leadTag=(light?'A recontacter':'RDV qualifié')+' · '+score()+'/10 · '+flow.a.role[1]+' · '+flow.a.secteur[1]+' · '+flow.a.taille[1]+' · '+(data.organisation||'');logConv();
    if(!ok){await say(R.err);return}
    if(light){await say(R.nurture_sent);return}
    await say(R.booked);

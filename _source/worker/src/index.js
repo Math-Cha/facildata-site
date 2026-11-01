@@ -1,7 +1,8 @@
 // Cloudflare Worker — Facilia, assistante IA du site facildata.com
 // Secret : ANTHROPIC_API_KEY  (npx wrangler secret put ANTHROPIC_API_KEY) — jamais dans le code ni dans le dépôt.
 // Variables : ALLOWED_ORIGIN (domaines autorisés), MODEL (optionnel).
-// Stockage optionnel : KV "RL" (limitation par IP et plafond quotidien global).
+// Stockage KV lié sous le nom "RL" : limitation par IP, plafond quotidien, journal des conversations (30 jours).
+// Déclencheur planifié (cron "0 6 * * *") : résumé quotidien + analyse IA envoyés à DIGEST_TO (défaut contact@facildata.com).
 
 const MODEL_DEFAULT = 'claude-haiku-5-5';
 const MAX_MSG = 12, MAX_LEN = 600, MAX_TOTAL = 4000, PER_IP_10MIN = 30, PER_DAY = 1500;
@@ -43,10 +44,55 @@ Le visiteur est en train de répondre aux questions de qualification et vient d'
 const OFF = { fr: "Je reste Facilia, l'assistante de Facildata. Parlons de votre patrimoine : que gérez-vous aujourd'hui ?", en: "I'm Facilia, Facildata's assistant. Let's talk about your assets: what do you manage today?" };
 const LEAK = /(regles_absolues|<role>|connaissances>|system prompt|message syst[eè]me|instructions? (syst|initial)|anthropic|claude|haiku|sonnet|opus)/i;
 
+const TTL_CONV = 60 * 60 * 24 * 30;
+const dayStr = (offset = 0) => new Date(Date.now() + offset * 86400000).toISOString().slice(0, 10);
+const cleanMsgs = (arr, max) => (Array.isArray(arr) ? arr : []).slice(-max)
+  .filter(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+  .map(m => ({ role: m.role, content: m.content.replace(/<[^>]*>/g, ' ').slice(0, MAX_LEN) }));
+
+async function saveConv(env, body, msgs, lang) {
+  if (!env.RL || !msgs.length) return;
+  const sid = typeof body.sid === 'string' && /^[a-z0-9]{6,24}$/i.test(body.sid) ? body.sid : 'x' + Math.random().toString(36).slice(2, 10);
+  const rec = { lang, page: String(body.page || '').slice(0, 80), lead: String(body.lead || '').slice(0, 200), at: new Date().toISOString(),
+    msgs: msgs.slice(-40).map(m => ({ r: m.role === 'user' ? 'V' : 'F', t: m.content })) };
+  await env.RL.put('conv:' + dayStr() + ':' + sid, JSON.stringify(rec), { expirationTtl: TTL_CONV });
+}
+
+async function sendDigest(env, day) {
+  if (!env.RL) return 'no-kv';
+  const keys = []; let cursor;
+  do { const l = await env.RL.list({ prefix: 'conv:' + day + ':', cursor }); keys.push(...l.keys); cursor = l.list_complete ? null : l.cursor; } while (cursor);
+  const convs = [];
+  for (const k of keys) { const v = await env.RL.get(k.name); if (v) { try { convs.push(JSON.parse(v)); } catch {} } }
+  if (!convs.length) return 'empty';
+  const transcript = convs.map((c, i) => `--- Conversation ${i + 1} · ${c.at.slice(11, 16)} UTC · ${c.lang.toUpperCase()} · ${c.page || '/'}${c.lead ? ' · ' + c.lead : ''}\n` +
+    c.msgs.map(m => (m.r === 'V' ? 'Visiteur : ' : 'Facilia : ') + m.t).join('\n')).join('\n\n');
+  let analyse = '';
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST',
+      headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: JSON.stringify({ model: env.MODEL || MODEL_DEFAULT, max_tokens: 1500,
+        system: "Tu analyses pour Mathieu CHAPLAIN, dirigeant de Facildata, les conversations de la veille entre les visiteurs du site facildata.com et Facilia, l'assistante IA du site. Rédige en français, en texte simple sans markdown, 15 lignes maximum, avec ces rubriques : 1) Chiffres (nombre de conversations, rendez-vous, hors cible) ; 2) Profils et secteurs des visiteurs ; 3) Questions et besoins qui reviennent ; 4) Objections ou freins ; 5) Prospects à rappeler en priorité et pourquoi ; 6) Réponses de Facilia à améliorer et contenus à ajouter sur le site. Sois factuel, ne devine pas d'identité, n'invente rien.",
+        messages: [{ role: 'user', content: transcript.slice(0, 40000) }] }) });
+    const j = await r.json();
+    analyse = (Array.isArray(j.content) ? j.content.filter(c => c.type === 'text').map(c => c.text).join(' ') : '').trim();
+    if (!r.ok) console.log('digest_ai_error', r.status, JSON.stringify(j.error || {}).slice(0, 200));
+  } catch (e) { console.log('digest_ai_error', String(e)); }
+  const to = env.DIGEST_TO || 'contact@facildata.com';
+  const res = await fetch('https://formsubmit.co/ajax/' + to, { method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Origin': 'https://facildata.com', 'Referer': 'https://facildata.com/' },
+    body: JSON.stringify({ _subject: `[Facilia] ${convs.length} conversation(s) le ${day.split('-').reverse().join('/')}`, _template: 'box',
+      analyse: analyse || '(analyse indisponible)', conversations: transcript.slice(0, 60000) }) });
+  const txt = await res.text();
+  console.log('digest_sent', day, convs.length, res.status, txt.slice(0, 200));
+  return res.status + ' ' + txt.slice(0, 120);
+}
+
 function json(obj, cors, status = 200) { return new Response(JSON.stringify(obj), { status, headers: { ...cors, 'Content-Type': 'application/json' } }); }
 
 export default {
-  async fetch(req, env) {
+  async scheduled(event, env, ctx) { ctx.waitUntil(sendDigest(env, dayStr(-1))); },
+  async fetch(req, env, ctx) {
     const origin = req.headers.get('Origin') || '';
     const allowed = (env.ALLOWED_ORIGIN || 'https://facildata.com,https://www.facildata.com').split(',').map(s => s.trim());
     const okOrigin = allowed.includes(origin);
@@ -65,6 +111,9 @@ export default {
       if (+ci >= PER_IP_10MIN || +cd >= PER_DAY) return json({ reply: lang === 'en' ? 'Too many messages, please try again later or book a meeting.' : 'Beaucoup de messages en peu de temps : réessayez plus tard ou prenez rendez-vous.', rdv: true }, cors);
       await Promise.all([env.RL.put(k, String(+ci + 1), { expirationTtl: 900 }), env.RL.put(d, String(+cd + 1), { expirationTtl: 90000 })]);
     }
+
+    // enregistrement seul (fin de conversation, qualification par boutons) : pas d'appel IA
+    if (body.log === true) { await saveConv(env, body, cleanMsgs(body.messages, 40), lang); return json({ ok: true }, cors); }
 
     // nettoyage de l'historique envoyé par le navigateur
     let total = 0;
@@ -94,6 +143,7 @@ export default {
     if (!text || LEAK.test(text)) text = OFF[lang];          // garde-fou de sortie
     text = text.replace(/[*#`_]{1,3}/g, '').slice(0, 900);
     const rdv = /rendez-vous|meeting|démonstration|demo/i.test(text);
+    ctx.waitUntil(saveConv(env, body, [...cleanMsgs(body.messages, 40), { role: 'assistant', content: text }], lang));
     return json({ reply: text, rdv }, cors);
   }
 };

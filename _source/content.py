@@ -135,7 +135,7 @@ T = {
  "legal_h1":"Mentions légales",
  "legal_blocks":[("Éditeur","Facildata SAS — 1010 avenue de l'Europe, 33260 La Teste-de-Buch, France. Directeur de la publication : Mathieu CHAPLAIN. Contact : contact@facildata.com. SIREN : 903 798 825 (SIRET 903 798 825 00035)."),
                  ("Hébergement","GitHub Pages — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA."),
-                 ("Données personnelles","Les informations saisies dans le formulaire ou dans le chat sont utilisées uniquement pour répondre à votre demande. Suppression sur simple demande à contact@facildata.com."),
+                 ("Données personnelles","Les informations saisies dans le formulaire ou dans le chat sont utilisées uniquement pour répondre à votre demande et améliorer nos réponses. Les conversations avec Facilia sont conservées 30 jours puis effacées automatiquement. Suppression sur simple demande à contact@facildata.com."),
                  ("Cookies","Ce site ne dépose aucun cookie de suivi."),
                  ("Propriété intellectuelle","FACILDATA est une marque déposée. Tous les contenus de ce site sont la propriété de Facildata SAS.")],
  "rdv":{
@@ -296,7 +296,7 @@ T = {
  "legal_h1":"Legal notice",
  "legal_blocks":[("Publisher","Facildata SAS — 1010 avenue de l'Europe, 33260 La Teste-de-Buch, France. Publication director: Mathieu CHAPLAIN. Contact: contact@facildata.com. SIREN: 903 798 825 (SIRET 903 798 825 00035)."),
                  ("Hosting","GitHub Pages — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA."),
-                 ("Personal data","Information entered in the form or the chat is used only to answer your request. Deletion on request at contact@facildata.com."),
+                 ("Personal data","Information entered in the form or the chat is used only to answer your request and improve our answers. Conversations with Facilia are kept for 30 days and then deleted automatically. Deletion on request at contact@facildata.com."),
                  ("Cookies","This site sets no tracking cookies."),
                  ("Intellectual property","FACILDATA is a registered trademark. All content on this site is the property of Facildata SAS.")],
  "rdv":{
