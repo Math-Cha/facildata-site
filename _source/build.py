@@ -653,7 +653,7 @@ def about_block(t,pre):
            "Nos fondateurs ont dirigé ces équipes dans de grands groupes du BTP et de l'industrie. Ils ont construit l'outil qu'ils auraient voulu avoir.")
         vis="Notre vision : que chaque bâtiment et chaque équipement ait une voix, pour que les gestionnaires pilotent au lieu de courir."
         team=[("MC","Mathieu CHAPLAIN","Cofondateur & CEO · ex-BTP et industrie"),("DB","Dora BOURGUIBA","Cofondatrice · Développement")]
-        facts=[("2021","création"),("Paris · Bordeaux","implantations"),("IA","française et responsable")]
+        facts=[("2021","création"),("Paris · Bordeaux","implantations"),("IA métier","bâtiment · industrie · maintenance")]
         bk="Ils nous accompagnent"
         labels=["Lauréat","Cartographie IA 2026","Smart City Expo 2024","Airbus Développement","Écosystème","Groupe Action Logement","Membre · annuaire","Écosystème","Portrait d'entreprise","Écosystème","Membre","Délégation CES 2026"]
         press_t,press_s="Placéco","« Proptech : Facildata dope à l'IA le carnet de santé des bâtiments »"
@@ -663,7 +663,7 @@ def about_block(t,pre):
            "Our founders led those teams in major construction and industrial groups. They built the tool they wished they had.")
         vis="Our vision: give every building and every piece of equipment a voice, so managers can steer instead of chase."
         team=[("MC","Mathieu CHAPLAIN","Co-founder & CEO · construction and industry background"),("DB","Dora BOURGUIBA","Co-founder · Business development")]
-        facts=[("2021","founded"),("Paris · Bordeaux","offices"),("AI","French and responsible")]
+        facts=[("2021","founded"),("Paris · Bordeaux","offices"),("Domain AI","buildings · industry · maintenance")]
         bk="They support us"
         labels=["Award winner","Listed · 2026 AI map","Smart City Expo 2024","Airbus Développement","Ecosystem","Action Logement group","Member · directory","Ecosystem","Company profile","Ecosystem","Member","CES 2026 delegation"]
         press_t,press_s="Placéco","Proptech: Facildata boosts the building health record with AI (FR)"
