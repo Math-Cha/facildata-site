@@ -660,7 +660,7 @@ def about_block(t,pre):
     fct="".join(f'<div><b>{a}</b><span>{b}</span></div>' for a,b in facts)
     L=[("reseau-entreprendre-aquitaine","Réseau Entreprendre Aquitaine","https://www.reseau-entreprendre.org/aquitaine/"),
        ("hub-france-ia","Hub France IA","https://www.cartographie.hub-franceia.fr/startup.html?startup=FACILDATA"),
-       ("totalenergies","TotalEnergies",None),("airbus","Airbus Développement",None),("technowest","Bordeaux Technowest",None),("domofrance","Domofrance",None),("french-tech-bordeaux","La French Tech Bordeaux","https://annuaire.frenchtechbordeaux.com/organisations/facildata"),("ba2e","BA2E – Agence de développement économique","https://ba2e.com/portraits-entreprises/facildata/"),("cobas","COBAS",None)]
+       ("totalenergies","TotalEnergies",None),("airbus","Airbus Développement",None),("technowest","Bordeaux Technowest",None),("domofrance","Domofrance",None),("french-tech-bordeaux","La French Tech Bordeaux","https://annuaire.frenchtechbordeaux.com/organisations/facildata"),("ba2e","BA2E – Agence de développement économique","https://ba2e.com/portraits-entreprises/facildata/"),("cobas","COBAS – Pôle économique","https://www.agglo-cobas.fr/pole-economique-cobas/")]
     def card(f,alt,href,lab):
         logo=f'<img src="{pre}img/partners/{f}.png" alt="{alt}" loading="lazy">' if os.path.exists(f"img/partners/{f}.png") else f'<span class="txtlogo">{alt}</span>'
         inner=f'{logo}<small>{lab}</small>'
