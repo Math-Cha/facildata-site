@@ -638,24 +638,24 @@ def video_block(t,pre):
 def about_block(t,pre):
     fr=t["lang"]=="fr"
     if fr:
-        k,h2="Qui sommes-nous","Des gens du terrain, au service de ceux qui gèrent."
-        p=("Facildata est née sur le terrain, dans une entreprise de maintenance multitechnique. Chaque jour, on y voyait des équipements oubliés, des contrats mal suivis et des heures perdues à chercher l'information. "
-           "Nos fondateurs viennent du BTP, de l'énergie et des grands chantiers. Ils ont construit l'outil qu'ils auraient voulu avoir.")
+        k,h2="Qui sommes-nous","Des grands groupes du BTP et de l'industrie à l'hypervision IA du patrimoine."
+        p=("Facildata est née d'un besoin vu sur le terrain, sur les chantiers comme dans l'industrie. Chaque jour, les équipes techniques y perdent des heures à chercher l'information, à relancer les prestataires et à suivre des équipements dispersés. "
+           "Nos fondateurs ont dirigé ces équipes dans de grands groupes du BTP et de l'industrie. Ils ont construit l'outil qu'ils auraient voulu avoir.")
         vis="Notre vision : que chaque bâtiment et chaque équipement ait une voix, pour que les gestionnaires pilotent au lieu de courir."
-        team=[("MC","Mathieu CHAPLAIN","Cofondateur & CEO · ex-BTP et énergie"),("DB","Dora BOURGUIBA","Cofondatrice · Développement")]
+        team=[("MC","Mathieu CHAPLAIN","Cofondateur & CEO · ex-BTP et industrie"),("DB","Dora BOURGUIBA","Cofondatrice · Développement")]
         facts=[("2021","création"),("Paris · Bordeaux","implantations"),("IA","française et responsable")]
         bk="Ils nous accompagnent"
-        labels=["Lauréat","Cartographie IA 2026","Smart City Expo 2024","Airbus Développement","Accompagnement","Groupe Action Logement","Membre · annuaire","Écosystème","Portrait d'entreprise","Accompagnement","Membre","Délégation CES 2026"]
+        labels=["Lauréat","Cartographie IA 2026","Smart City Expo 2024","Airbus Développement","Écosystème","Groupe Action Logement","Membre · annuaire","Écosystème","Portrait d'entreprise","Écosystème","Membre","Délégation CES 2026"]
         press_t,press_s="Placéco","« Proptech : Facildata dope à l'IA le carnet de santé des bâtiments »"
     else:
-        k,h2="About us","Field people, working for those who manage."
-        p=("Facildata was born in the field, inside a multi-technical maintenance company. Every day we saw forgotten equipment, poorly tracked contracts and hours lost looking for information. "
-           "Our founders come from construction, energy and major infrastructure projects. They built the tool they wished they had.")
+        k,h2="About us","From major construction and industrial groups to AI hypervision for your assets."
+        p=("Facildata was born from a need seen in the field, on construction sites and in industry alike. Every day, technical teams lose hours looking for information, chasing contractors and tracking scattered equipment. "
+           "Our founders led those teams in major construction and industrial groups. They built the tool they wished they had.")
         vis="Our vision: give every building and every piece of equipment a voice, so managers can steer instead of chase."
-        team=[("MC","Mathieu CHAPLAIN","Co-founder & CEO · construction and energy background"),("DB","Dora BOURGUIBA","Co-founder · Business development")]
+        team=[("MC","Mathieu CHAPLAIN","Co-founder & CEO · construction and industry background"),("DB","Dora BOURGUIBA","Co-founder · Business development")]
         facts=[("2021","founded"),("Paris · Bordeaux","offices"),("AI","French and responsible")]
         bk="They support us"
-        labels=["Award winner","Listed · 2026 AI map","Smart City Expo 2024","Airbus Développement","Support","Action Logement group","Member · directory","Ecosystem","Company profile","Support","Member","CES 2026 delegation"]
+        labels=["Award winner","Listed · 2026 AI map","Smart City Expo 2024","Airbus Développement","Ecosystem","Action Logement group","Member · directory","Ecosystem","Company profile","Ecosystem","Member","CES 2026 delegation"]
         press_t,press_s="Placéco","Proptech: Facildata boosts the building health record with AI (FR)"
     mates="".join(f'<div class="mate rv"><div class="av">{i}</div><div><b>{n}</b><span>{r}</span></div></div>' for i,n,r in team)
     fct="".join(f'<div><b>{a}</b><span>{b}</span></div>' for a,b in facts)
