@@ -420,11 +420,13 @@ export default {
       r = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-        body: JSON.stringify({ model: env.MODEL || MODEL_DEFAULT, max_tokens: 300, temperature: 0.4, system: SYSTEM(lang, stage), messages: merged })
+        body: JSON.stringify({ model: env.MODEL || MODEL_DEFAULT, max_tokens: 1024, system: SYSTEM(lang, stage), messages: merged })
       });
-    } catch { return json({ reply: '' }, cors); }
+    } catch (e) { console.log('fetch_error', String(e)); return json({ reply: '' }, cors); }
     const j = await r.json().catch(() => ({}));
-    let text = (j.content && j.content[0] && j.content[0].text || '').trim();
+    if (!r.ok) console.log('anthropic_error', r.status, JSON.stringify(j.error || j).slice(0, 300));
+    let text = (Array.isArray(j.content) ? j.content.filter(c => c && c.type === 'text').map(c => c.text).join(' ') : '').trim();
+    if (r.ok && !text) console.log('empty_reply', JSON.stringify((j.content || []).map(c => c.type)), j.stop_reason);
     if (!text || LEAK.test(text)) text = OFF[lang];          // garde-fou de sortie
     text = text.replace(/[*#`_]{1,3}/g, '').slice(0, 900);
     const rdv = /rendez-vous|meeting|démonstration|demo/i.test(text);
