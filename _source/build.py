@@ -90,7 +90,7 @@ nav a{opacity:.85}nav a:hover{opacity:1;color:var(--o)}
 .ui{font-size:.82rem;position:relative;display:grid;gap:14px}
 .uicard{background:#fff;color:var(--ink);border-radius:16px;padding:16px 18px;box-shadow:0 24px 60px rgba(0,0,0,.35);transition:.3s}
 .uicard:hover{transform:translateY(-3px)}
-.ui .uicard:nth-child(2){margin-left:40px}.ui .uicard:nth-child(3){margin-left:14px}
+.ui .uicard{animation:fl 6s ease-in-out infinite}.ui .uicard:nth-child(2){animation-delay:-2s}.ui .uicard:nth-child(3){animation-delay:-4s}@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@media(prefers-reduced-motion:reduce){.ui .uicard{animation:none}}
 @media(max-width:600px){.ui .uicard{margin-left:0!important}}
 .tag{display:inline-flex;align-items:center;gap:6px;font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--o);background:#FFF1E7;padding:4px 10px;border-radius:999px;margin-bottom:10px}
 .tag i{width:7px;height:7px;border-radius:50%;background:var(--o);display:inline-block;animation:pulse 1.8s infinite}
@@ -471,6 +471,8 @@ export default {
     if (req.method !== 'POST' || !okOrigin) return json({ error: 'forbidden' }, cors, 403);
 
     let body; try { body = await req.json(); } catch { return json({ error: 'bad' }, cors, 400); }
+    // langue par défaut : pays du visiteur (fourni par Cloudflare), sans stockage ni appel IA
+    if (body && body.geo === true) return json({ c: (req.cf && req.cf.country) || '' }, cors);
     const lang = body.lang === 'en' ? 'en' : 'fr';
 
     // limitation : par IP (10 min) et plafond quotidien global (protège le budget API)
@@ -593,6 +595,13 @@ def ui_sector(u, score, lines):
 </div>'''
 
 # ---------------------------------------------------------------- shell
+GEO_JS = """<script>(function(){try{var L=document.documentElement.lang,K="fd_lang",ls=window.localStorage,FR=["FR","MC","GP","MQ","GF","RE","YT","PM","BL","MF","WF","PF","NC"];
+if(/bot|crawl|spider|slurp|lighthouse|preview/i.test(navigator.userAgent))return;
+function go(t){if(t===L)return;var a=document.querySelector('link[hreflang="'+t+'"]');if(a)location.replace(a.href+location.hash)}
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a.lang");if(a)try{ls.setItem(K,L==="fr"?"en":"fr")}catch(_){}});
+var p=ls.getItem(K);if(p){go(p);return}
+fetch("__EP__",{method:"POST",headers:{"Content-Type":"application/json"},body:'{"geo":true}'}).then(function(r){return r.json()}).then(function(j){if(!j||!j.c)return;var t=FR.indexOf(j.c)>-1?"fr":"en";try{ls.setItem(K,t)}catch(_){}go(t)}).catch(function(){})}catch(_){}})();</script>""".replace("__EP__", CHAT_ENDPOINT or "")
+
 def shell(t, title, desc, body, path, canonical_other, extra_head="", light_top=False):
     pre = "../" if t["prefix"] else ""
     nav = "".join(f'<a href="{pre}{t["prefix"]}{h}">{l}</a>' for h,l in t["nav"])
@@ -606,7 +615,7 @@ def shell(t, title, desc, body, path, canonical_other, extra_head="", light_top=
     return f'''<!DOCTYPE html>
 <html lang="{t["lang"]}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)}</title><meta name="description" content="{html.escape(desc)}">
-<link rel="canonical" href="{canon}"><link rel="alternate" hreflang="fr" href="{alt_fr}"><link rel="alternate" hreflang="en" href="{alt_en}">
+<link rel="canonical" href="{canon}"><link rel="alternate" hreflang="fr" href="{alt_fr}"><link rel="alternate" hreflang="en" href="{alt_en}">{GEO_JS}
 <meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}"><meta property="og:type" content="website"><meta property="og:image" content="{DOMAIN}/img/hero.jpg">
 <link rel="icon" href="{pre}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">

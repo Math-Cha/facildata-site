@@ -77,7 +77,7 @@ nav a{opacity:.85}nav a:hover{opacity:1;color:var(--o)}
 .ui{font-size:.82rem;position:relative;display:grid;gap:14px}
 .uicard{background:#fff;color:var(--ink);border-radius:16px;padding:16px 18px;box-shadow:0 24px 60px rgba(0,0,0,.35);transition:.3s}
 .uicard:hover{transform:translateY(-3px)}
-.ui .uicard:nth-child(2){margin-left:40px}.ui .uicard:nth-child(3){margin-left:14px}
+.ui .uicard{animation:fl 6s ease-in-out infinite}.ui .uicard:nth-child(2){animation-delay:-2s}.ui .uicard:nth-child(3){animation-delay:-4s}@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@media(prefers-reduced-motion:reduce){.ui .uicard{animation:none}}
 @media(max-width:600px){.ui .uicard{margin-left:0!important}}
 .tag{display:inline-flex;align-items:center;gap:6px;font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--o);background:#FFF1E7;padding:4px 10px;border-radius:999px;margin-bottom:10px}
 .tag i{width:7px;height:7px;border-radius:50%;background:var(--o);display:inline-block;animation:pulse 1.8s infinite}
