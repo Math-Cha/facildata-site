@@ -645,7 +645,7 @@ def about_block(t,pre):
         team=[("MC","Mathieu CHAPLAIN","Cofondateur & CEO · ex-BTP et énergie"),("DB","Dora BOURGUIBA","Cofondatrice · Développement")]
         facts=[("2021","création"),("Paris · Bordeaux","implantations"),("IA","française et responsable")]
         bk="Ils nous accompagnent"
-        labels=["Lauréat","Cartographie IA 2026","Accompagnement","Airbus Développement","Accompagnement","Groupe Action Logement","Membre · annuaire","Écosystème","Portrait d'entreprise","Accompagnement","Délégation CES 2026"]
+        labels=["Lauréat","Cartographie IA 2026","Smart City Expo 2024","Airbus Développement","Accompagnement","Groupe Action Logement","Membre · annuaire","Écosystème","Portrait d'entreprise","Accompagnement","Délégation CES 2026"]
         press_t,press_s="Placéco","« Proptech : Facildata dope à l'IA le carnet de santé des bâtiments »"
     else:
         k,h2="About us","Field people, working for those who manage."
@@ -655,13 +655,13 @@ def about_block(t,pre):
         team=[("MC","Mathieu CHAPLAIN","Co-founder & CEO · construction and energy background"),("DB","Dora BOURGUIBA","Co-founder · Business development")]
         facts=[("2021","founded"),("Paris · Bordeaux","offices"),("AI","French and responsible")]
         bk="They support us"
-        labels=["Award winner","Listed · 2026 AI map","Support","Airbus Développement","Support","Action Logement group","Member · directory","Ecosystem","Company profile","Support","CES 2026 delegation"]
+        labels=["Award winner","Listed · 2026 AI map","Smart City Expo 2024","Airbus Développement","Support","Action Logement group","Member · directory","Ecosystem","Company profile","Support","CES 2026 delegation"]
         press_t,press_s="Placéco","Proptech: Facildata boosts the building health record with AI (FR)"
     mates="".join(f'<div class="mate rv"><div class="av">{i}</div><div><b>{n}</b><span>{r}</span></div></div>' for i,n,r in team)
     fct="".join(f'<div><b>{a}</b><span>{b}</span></div>' for a,b in facts)
     L=[("reseau-entreprendre-aquitaine","Réseau Entreprendre Aquitaine","https://www.reseau-entreprendre.org/aquitaine/"),
        ("hub-france-ia","Hub France IA","https://www.cartographie.hub-franceia.fr/startup.html?startup=FACILDATA"),
-       ("totalenergies","TotalEnergies",None),("airbus","Airbus Développement",None),("technowest","Bordeaux Technowest",None),("domofrance","Domofrance – Nuit de l'innovation","https://www.domofrance.fr/actualites/nuit-de-linnovation-de-domofrance-innover-pour-batir-les-territoires-de-demain"),("french-tech-bordeaux","La French Tech Bordeaux","https://annuaire.frenchtechbordeaux.com/organisations/facildata"),("french-tech-grand-paris","La French Tech Grand Paris",None),("ba2e","BA2E – Agence de développement économique","https://ba2e.com/portraits-entreprises/facildata/"),("cobas","COBAS – Pôle économique","https://www.agglo-cobas.fr/pole-economique-cobas/"),("region-nouvelle-aquitaine","Région Nouvelle-Aquitaine","https://entreprises.nouvelle-aquitaine.fr/agenda/ces-las-vegas")]
+       ("totalenergies","TotalEnergies – Smart City Expo 2024","https://direction-france.totalenergies.fr/totalenergies-accompagne-19-pme-francaises-au-salon-smart-city-expo-2024"),("airbus","Airbus Développement",None),("technowest","Bordeaux Technowest",None),("domofrance","Domofrance – Nuit de l'innovation","https://www.domofrance.fr/actualites/nuit-de-linnovation-de-domofrance-innover-pour-batir-les-territoires-de-demain"),("french-tech-bordeaux","La French Tech Bordeaux","https://annuaire.frenchtechbordeaux.com/organisations/facildata"),("french-tech-grand-paris","La French Tech Grand Paris",None),("ba2e","BA2E – Agence de développement économique","https://ba2e.com/portraits-entreprises/facildata/"),("cobas","COBAS – Pôle économique","https://www.agglo-cobas.fr/pole-economique-cobas/"),("region-nouvelle-aquitaine","Région Nouvelle-Aquitaine","https://entreprises.nouvelle-aquitaine.fr/agenda/ces-las-vegas")]
     def card(f,alt,href,lab):
         logo=f'<img src="{pre}img/partners/{f}.png" alt="{alt}" loading="lazy">' if os.path.exists(f"img/partners/{f}.png") else f'<span class="txtlogo">{alt}</span>'
         inner=f'{logo}<small>{lab}</small>'
