@@ -11,7 +11,18 @@ HUBSPOT = "https://meetings-eu1.hubspot.com/dora-facildata/gitex?uuid=48e4abde-2
 CHAT_ENDPOINT = os.environ.get("CHAT_ENDPOINT", "https://facilia-chat.mathieu-chaplain.workers.dev/")   # URL du worker Cloudflare ; vide = mode démo
 OUT = "dist"
 
-CSS = r"""
+CSS = r""".vsec{position:relative;background:linear-gradient(180deg,var(--ink) 0 46%,#fff 46%);padding:0 0 70px}
+.vsec .wrap{max-width:1040px}
+.vhead{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;color:#fff;padding:56px 0 22px}
+.vhead h2{color:#fff;font-size:clamp(1.5rem,2.6vw,2.1rem);margin:0}.vhead p{margin:0;color:#B6B9C9;max-width:380px;font-size:.98rem}
+.vbox{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:16/9;background:#0B1020;box-shadow:0 40px 90px rgba(11,16,32,.35),0 0 0 1px rgba(255,255,255,.08)}
+.vbox video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.vplay{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-start;padding:26px;background:linear-gradient(0deg,rgba(11,16,32,.3),rgba(11,16,32,0) 50%);border:0;cursor:pointer;transition:.3s}
+.vplay span{height:58px;padding:0 24px 0 18px;gap:10px;border-radius:999px;background:var(--o);color:#fff;font-weight:800;font-size:1rem;font-family:inherit;display:flex;align-items:center;box-shadow:0 0 0 12px rgba(242,107,29,.22);transition:.3s}
+.vplay:hover span{transform:scale(1.05);box-shadow:0 0 0 18px rgba(242,107,29,.18)}
+.vbox.on .vplay{opacity:0;pointer-events:none}
+@media(max-width:700px){.vhead{flex-direction:column;align-items:flex-start;padding:40px 0 18px}.vsec{background:linear-gradient(180deg,var(--ink) 0 58%,#fff 58%);padding-bottom:48px}.vbox{border-radius:16px}.vplay{padding:14px}.vplay span{height:46px;font-size:.9rem;padding:0 18px 0 14px;box-shadow:0 0 0 8px rgba(242,107,29,.22)}}
+
 :root{--o:#F26B1D;--o2:#FFA14A;--ink:#0B1020;--ink2:#1C2238;--txt:#2A2F45;--mute:#6B7085;--line:#E6E4DF;--bg:#FFFFFF;--soft:#F7F5F1;--r:20px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;font-family:"Plus Jakarta Sans",Inter,system-ui,-apple-system,sans-serif;color:var(--txt);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
@@ -594,6 +605,16 @@ def final_cta(t):
     return f'<section class="final"><div class="wrap rv"><h2 style="margin:0 auto .4em">{t["final_h2"]}</h2><p class="lead">{t["final_p"]}</p><a class="btn white" href="contact.html#rdv" data-rdv>{t["cta"]} {I("arrow")}</a> <a class="btn outline" href="#" data-chat>{I("spark")} {t["cta_chat"]}</a></div></section>'
 
 # ---------------------------------------------------------------- pages
+def video_block(t,pre):
+    fr=t["lang"]=="fr"; l=t["lang"]
+    h2="Facildata en vidéo" if fr else "Facildata in motion"
+    p=("De l'alerte à l'intervention : voyez l'hypervision IA à l'œuvre sur votre patrimoine." if fr else "From alert to action: see AI hypervision at work across your assets.")
+    btn=("Voir la vidéo · 0:43" if fr else "Watch the video · 0:36")
+    aria="Lire la vidéo" if fr else "Play the video"
+    return f'''<section class="vsec" id="video"><div class="wrap"><div class="vhead"><h2>{h2}</h2><p>{p}</p></div>
+<div class="vbox" id="vbox"><video id="fdv" preload="none" playsinline poster="{pre}img/video-{l}.jpg"><source src="{pre}img/video-{l}.mp4" type="video/mp4"></video>
+<button class="vplay" aria-label="{aria}" onclick="var b=document.getElementById('vbox'),v=document.getElementById('fdv');b.classList.add('on');v.controls=true;v.play()"><span><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M7 4.5v15l13-7.5z"/></svg>{btn}</span></button></div></div></section>'''
+
 def home(t):
     u=UI[t["lang"]]; pre = "../" if t["prefix"] else ""
     kpis="".join(f'<div class="kpi"><b>{a}</b><span>{b}</span></div>' for a,b in t["kpis"])
@@ -611,6 +632,7 @@ def home(t):
 <div class="hero"><div class="bg" style="background-image:url({pre}img/hero.jpg)"></div><div class="wrap"><div><div class="kicker">{t["hero_kicker"]}</div><h1>{t["hero_h1"]}</h1><p class="lead">{t["hero_p"]}</p>
 <div class="cta"><a class="btn" href="contact.html#rdv" data-rdv>{t["cta"]} {I("arrow")}</a><a class="btn outline" href="#" data-chat>{I("spark")} {t["cta_chat"]}</a></div>
 <div class="kpis">{kpis}</div></div>{ui_hero(u)}</div></div>
+{video_block(t,pre)}
 <section class="tight"><div class="wrap"><div class="kicker">{t["who_kicker"]}</div><h2>{t["who_h2"]}</h2><div class="who" style="margin-top:32px">{who}</div><div class="kpis trust">{trust}</div></div></section>
 <section class="soft" id="besoins"><div class="wrap"><div class="kicker">{t["needs_kicker"]}</div><h2>{t["needs_h2"]}</h2><div class="needs" style="margin-top:40px">{needs}</div></div></section>
 <section class="dark" id="agents"><div class="wrap"><div class="kicker">{t["agents_kicker"]}</div><h2>{t["agents_h2"]}</h2><p class="lead">{t["agents_p"]}</p><div class="agents" style="margin-top:44px">{agents}</div></div></section>
