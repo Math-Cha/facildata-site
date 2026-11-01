@@ -166,10 +166,15 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--o2);border-color
 #fd-chat .msgs .bubble{font-size:.88rem}
 #fd-chat .in{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff}
 #fd-chat .in input{flex:1;border-radius:999px;padding:11px 14px}
-#fd-chat .in button{border:0;background:var(--o);color:#fff;border-radius:999px;width:44px;height:44px;cursor:pointer;display:grid;place-items:center}#fd-chat .in button svg{width:18px;height:18px}
+#fd-chat .in .go{border:0;background:var(--o);color:#fff;border-radius:999px;width:44px;height:44px;cursor:pointer;display:grid;place-items:center}#fd-chat .in button svg{width:18px;height:18px}
 #fd-chat .rdv{display:inline-block;margin:6px 0 2px;background:var(--o);color:#fff;border-radius:999px;padding:8px 14px;font-weight:700;font-size:.82rem}
 .typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#aaa;margin:0 2px;animation:ty 1s infinite}.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
 @keyframes ty{0%,100%{opacity:.3}50%{opacity:1}}
+
+#fd-chat .in .mic{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;width:44px;height:44px;cursor:pointer;display:grid;place-items:center;flex:none;transition:.2s}
+#fd-chat .in .mic svg{width:19px;height:19px}#fd-chat .in .mic:hover{border-color:var(--o);color:var(--o)}
+#fd-chat .in .mic.on{background:#E5484D;border-color:#E5484D;color:#fff;animation:micp 1.4s infinite}
+@keyframes micp{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.45)}60%{box-shadow:0 0 0 10px rgba(229,72,77,0)}}
 #fd-chat .chips-q{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
 #fd-chat .chips-q button{font:600 .8rem "Plus Jakarta Sans",system-ui;border:1px solid #f3c2a3;background:#fff;color:var(--ink);border-radius:999px;padding:8px 12px;cursor:pointer;text-align:left;transition:.2s}
 #fd-chat .chips-q button:hover{background:var(--o);color:#fff;border-color:var(--o)}

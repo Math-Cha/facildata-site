@@ -1,5 +1,12 @@
 name = "facilia-chat"
 main = "src/index.js"
 compatibility_date = "2026-01-01"
+
 [vars]
-ALLOWED_ORIGIN = "https://facildata.com,https://www.facildata.com"
+ALLOWED_ORIGIN = "https://facildata.com,https://www.facildata.com,https://math-cha.github.io"
+
+# Limitation par IP + plafond quotidien : créer le stockage puis décommenter
+# npx wrangler kv namespace create RL
+# [[kv_namespaces]]
+# binding = "RL"
+# id = "<id renvoyé par la commande>"
