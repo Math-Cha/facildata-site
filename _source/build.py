@@ -561,6 +561,7 @@ def I(name, cls=""):
     "stadium":'<ellipse cx="12" cy="12" rx="9" ry="5"/><path d="M3 12v4c0 2.8 4 5 9 5s9-2.2 9-5v-4M8 10.5v6M16 10.5v6"/>',
     "energy":'<path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="4"/>',
     "keys":'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 4l3 3M13 7l3 3"/>',
+    "homes":'<path d="M2 21h20M3.5 21V8.5L9 4l5.5 4.5V21M14.5 21v-7.5L18.5 10l3 3.5V21M6.5 11h1.5M10 11h1.5M6.5 14.5h1.5M10 14.5h1.5M7.5 21v-3h3v3M17.5 21v-3.5h2V21"/>',
     "nfc":'<path d="M6 8.5a7 7 0 0 1 0 7M9.5 10a3.5 3.5 0 0 1 0 4M15 4a11 11 0 0 1 0 16M18.5 6.5a8 8 0 0 1 0 11"/>',
     "cloud":'<path d="M7 18a4 4 0 0 1-.5-8 6 6 0 0 1 11.5 2 3 3 0 0 1 0 6z"/>',
     "eye":'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
@@ -691,7 +692,7 @@ def about_block(t,pre):
 def home(t):
     u=UI[t["lang"]]; pre = "../" if t["prefix"] else ""
     kpis="".join(f'<div class="kpi"><b>{a}</b><span>{b}</span></div>' for a,b in t["kpis"])
-    who="".join(f'<a href="{h}">{I(ic)}{w}</a>' for w,ic,h in zip(t["who"],["building","hotel","factory","stadium","energy","keys"],[t["sectors"]["collectivites"]["file"],t["sectors"]["hotellerie"]["file"],t["sectors"]["industrie"]["file"],t["sectors"]["stades"]["file"],"contact.html","contact.html"]))
+    who="".join(f'<a href="{h}">{I(ic)}{w}</a>' for w,ic,h in zip(t["who"],["building","hotel","factory","stadium","energy","homes"],[t["sectors"]["collectivites"]["file"],t["sectors"]["hotellerie"]["file"],t["sectors"]["industrie"]["file"],t["sectors"]["stades"]["file"],"contact.html","contact.html"]))
     needs="".join(f'<div class="need rv"><b>0{i}</b><h3>{a}</h3><p>{b}</p></div>' for i,(a,b) in enumerate(t["needs"],1))
     agents="".join(f'<div class="agent rv"><span class="dot"></span><div class="ico">{I(ic)}</div><h3>{a}</h3><p>{b}</p></div>' for (a,b),ic in zip(t["agents"],["contract","eye","cal","gauge","star","chart"]))
     deploy="".join(f'<div>{"<div class=ico>"+I(ic)+"</div>"}<div><b>{a}</b><p>{b}</p></div></div>' for (a,b),ic in zip(t["deploy"],["qr","cloud","plug","users"]))
