@@ -14,9 +14,26 @@ QR_FLOAT = os.environ.get("FD_QRFLOAT","1")=="1"
 SCAN_FX = os.environ.get("FD_SCANFX","1")=="1"
 SKYLINE = os.environ.get("FD_SKYLINE","1")=="1"
 
-CSS = r""".role .dots{display:none}.role .dots i{display:inline-block;width:6px;height:6px;margin:6px 2px 0;border-radius:50%;background:var(--o);opacity:.5;animation:ty 1s infinite}.role .dots i:nth-child(2){animation-delay:.2s}.role .dots i:nth-child(3){animation-delay:.4s}
+CSS = r""".dbox{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 70px rgba(11,16,32,.12);overflow:hidden;display:flex;flex-direction:column}
+.dhd{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#FCFAF7)}
+.dav{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--o),var(--o2));color:#fff;display:flex;align-items:center;justify-content:center}.dav svg{width:20px;height:20px}
+.dhd b{display:block;color:var(--ink)}.dhd small{display:flex;align-items:center;gap:6px;color:var(--mute);font-size:.78rem}.dhd small i{width:7px;height:7px;border-radius:50%;background:#3DDC97;box-shadow:0 0 0 3px rgba(61,220,151,.2)}
+.dmsgs{padding:16px 18px;background:var(--soft);min-height:470px;display:flex;flex-direction:column}
+.dmsgs .bubble{max-width:86%;font-size:.9rem}.dmsgs .bubble.ai{align-self:flex-start}.dmsgs .bubble.me{align-self:flex-end}
+.dtyp{display:none}.dtyp i{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:var(--o);opacity:.5;animation:ty 1s infinite}.dtyp i:nth-child(2){animation-delay:.2s}.dtyp i:nth-child(3){animation-delay:.4s}
+.dcta{align-self:flex-start;margin-top:6px;font-size:.9rem;padding:10px 18px}@media(max-width:600px){.dmsgs{min-height:560px}}
+.dbar{display:flex;align-items:center;gap:8px;padding:12px 14px;border-top:1px solid var(--line);background:#fff}
+.dinput{flex:1;min-height:42px;border:1px solid var(--line);border-radius:999px;padding:10px 16px;font-size:.9rem;color:var(--ink);display:flex;align-items:center;gap:10px;overflow:hidden}
+.dtxt:empty:before{content:attr(data-ph);color:#9A9EB0}
+.wave{display:none;align-items:center;gap:3px;height:18px;margin-left:auto;flex:none}.wave i{width:3px;border-radius:2px;background:var(--o);animation:wv .9s ease-in-out infinite}.wave i:nth-child(2n){animation-delay:.15s}.wave i:nth-child(3n){animation-delay:.3s}.wave i:nth-child(4n){animation-delay:.45s}
+@keyframes wv{0%,100%{height:4px}50%{height:18px}}
+.dmic,.dsend{flex:none;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.25s}.dmic{background:var(--soft);color:var(--ink)}.dsend{background:var(--ink);color:#fff}.dmic svg,.dsend svg{width:20px;height:20px}
+.dbox.rec .dmic{background:var(--o);color:#fff;box-shadow:0 0 0 0 rgba(242,107,29,.5);animation:mp 1.3s ease-out infinite}.dbox.rec .wave{display:flex}.dbox.rec .dinput{border-color:var(--o)}
+@keyframes mp{0%{box-shadow:0 0 0 0 rgba(242,107,29,.5)}100%{box-shadow:0 0 0 14px rgba(242,107,29,0)}}
+.dbox.js .dmsgs .bubble:not(.dtyp),.dbox.js .dcta{display:none}.dbox.js .dmsgs .shown{display:block!important;animation:mpop .35s cubic-bezier(.2,.8,.2,1)}.dbox.js .dcta.shown{display:inline-flex!important}.dbox.js .dtyp.on{display:block}
+.role .dots{display:none}.role .dots i{display:inline-block;width:6px;height:6px;margin:6px 2px 0;border-radius:50%;background:var(--o);opacity:.5;animation:ty 1s infinite}.role .dots i:nth-child(2){animation-delay:.2s}.role .dots i:nth-child(3){animation-delay:.4s}
 .conv.anim .bubble{opacity:0;transform:translateY(8px);transition:.4s cubic-bezier(.2,.8,.2,1)}.conv.anim .bubble.vis{opacity:1;transform:none}
-.conv.anim.typing .dots{display:inline-block}.conv.anim .ans:after{content:"";display:inline-block;width:2px;height:1em;background:var(--o);margin-left:2px;vertical-align:-2px;opacity:0}.conv.anim.writing .ans:after{opacity:1;animation:cur .8s steps(2) infinite}
+.conv.anim.ftyping .dots{display:inline-block}.conv.anim .ans:after{content:"";display:inline-block;width:2px;height:1em;background:var(--o);margin-left:2px;vertical-align:-2px;opacity:0}.conv.anim.writing .ans:after{opacity:1;animation:cur .8s steps(2) infinite}
 @keyframes cur{50%{opacity:0}}
 .chatcard .sub{font-size:.78rem;color:var(--mute);display:flex;align-items:center;gap:6px;margin-top:2px}.chatcard .sub .live{width:7px;height:7px;border-radius:50%;background:#3DDC97;box-shadow:0 0 0 3px rgba(61,220,151,.25)}
 .fchat{display:flex;flex-direction:column;gap:6px;margin-top:10px}
@@ -611,6 +628,7 @@ ALLOWED_ORIGIN = "https://facildata.com,https://www.facildata.com,https://math-c
 # ---------------------------------------------------------------- icons
 def I(name, cls=""):
     p = {
+    "mic":'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6"/>',
     "qr":'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM18 18h3v3h-3zM18 14h3M14 18v3"/>',
     "spark":'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>',
     "check":'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>',
@@ -706,9 +724,14 @@ def ui_sector(u, score, lines):
 </div>'''
 
 # ---------------------------------------------------------------- shell
-FX_JS = r"""<script>(function(f){document.readyState!="loading"?f():addEventListener("DOMContentLoaded",f)})(function(){if(!window.IntersectionObserver)return;[].slice.call(document.querySelectorAll(".result h3.cnt")).forEach(function(h){var t=h.textContent,m=t.match(/^(\D*)(\d+)(.*)$/);if(!m)return;var pre=m[1],to=+m[2],suf=m[3];if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;h.textContent=pre+"0"+suf;
+FX_JS = r"""<script>(function(f){document.readyState!="loading"?f():addEventListener("DOMContentLoaded",f)})(function(){var d=document.getElementById("dbox");if(!d||!window.IntersectionObserver||matchMedia("(prefers-reduced-motion:reduce)").matches)return;d.classList.add("js");
+var B=[].slice.call(d.querySelectorAll(".dmsgs .bubble:not(.dtyp)")),ty=d.querySelector(".dtyp"),cta=d.querySelector(".dcta"),tx=d.querySelector(".dtxt"),T=0;
+function at(ms,f){T+=ms;setTimeout(f,T)}
+function typeAi(b){at(400,function(){ty.classList.add("on")});at(1100,function(){ty.classList.remove("on");var t=b.getAttribute("data-t");b.textContent="";b.classList.add("shown");var i=0;(function w(){b.textContent=t.slice(0,++i);if(i<t.length)setTimeout(w,14+Math.random()*14)})()});T+=b.getAttribute("data-t").length*21+300}
+function speak(b){var words=b.getAttribute("data-t").split(" ");at(700,function(){d.classList.add("rec")});words.forEach(function(w,k){at(k?230+Math.random()*120:500,function(){tx.textContent+=(k?" ":"")+w})});at(700,function(){d.classList.remove("rec")});at(450,function(){tx.textContent="";b.classList.add("shown")})}
+new IntersectionObserver(function(e,o){if(!e[0].isIntersecting)return;o.disconnect();typeAi(B[0]);speak(B[1]);typeAi(B[2]);typeAi(B[3]);at(500,function(){cta.classList.add("shown")})},{threshold:.5}).observe(d)})</script><script>(function(f){document.readyState!="loading"?f():addEventListener("DOMContentLoaded",f)})(function(){if(!window.IntersectionObserver)return;[].slice.call(document.querySelectorAll(".result h3.cnt")).forEach(function(h){var t=h.textContent,m=t.match(/^(\D*)(\d+)(.*)$/);if(!m)return;var pre=m[1],to=+m[2],suf=m[3];if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;h.textContent=pre+"0"+suf;
 new IntersectionObserver(function(e,o){if(!e[0].isIntersecting)return;o.disconnect();var t0=performance.now(),D=to>50?1800:1300;(function f(n){var u=Math.min(1,(n-t0)/D),v=Math.round(to*(1-Math.pow(1-u,3)));h.textContent=pre+v+suf;if(u<1)requestAnimationFrame(f)})(t0)},{threshold:.6}).observe(h)})})</script><script>(function(f){document.readyState!="loading"?f():addEventListener("DOMContentLoaded",f)})(function(){if(matchMedia("(prefers-reduced-motion:reduce)").matches||!window.IntersectionObserver)return;[].slice.call(document.querySelectorAll(".role .conv")).forEach(function(c){var me=c.querySelector(".bubble.me"),ai=c.querySelector(".bubble.ai"),a=c.querySelector(".ans"),t=a.getAttribute("data-t");c.classList.add("anim");a.textContent="";
-new IntersectionObserver(function(e,o){if(!e[0].isIntersecting)return;o.disconnect();var now=Date.now(),d=Math.max(0,(window.__rq||0)-now);window.__rq=now+d+1700;setTimeout(function(){me.classList.add("vis")},200+d);setTimeout(function(){ai.classList.add("vis");c.classList.add("typing")},900+d);setTimeout(function(){c.classList.remove("typing");c.classList.add("writing");var i=0;(function w(){a.textContent=t.slice(0,++i);if(i<t.length)setTimeout(w,18+Math.random()*22);else setTimeout(function(){c.classList.remove("writing")},900)})()},2100+d)},{threshold:.55}).observe(c)})})</script><script>(function(f){document.readyState!="loading"?f():addEventListener("DOMContentLoaded",f)})(function(){var k=document.querySelector(".skyline");if(!k)return;new IntersectionObserver(function(e,o){if(!e[0].isIntersecting)return;o.disconnect();k.classList.add("in");k.querySelectorAll("b[data-to]").forEach(function(b){var to=+b.dataset.to,pre=b.dataset.pre,t0=performance.now(),loc=document.documentElement.lang=="fr"?"fr-FR":"en-US";(function f(n){var u=Math.min(1,(n-t0)/1600),v=Math.round(to*(1-Math.pow(1-u,3)));b.textContent=pre+v.toLocaleString(loc).replace(/ /g," ");if(u<1)requestAnimationFrame(f)})(t0)})},{threshold:.35}).observe(k)})</script><script>(function(f){document.readyState=="complete"?f():addEventListener("load",f)})(function(){var p=document.querySelector(".photo.scanfx");if(!p||matchMedia("(prefers-reduced-motion:reduce)").matches)return;if(innerWidth>1000)p.classList.add("armed");var run=false,T=[];
+new IntersectionObserver(function(e,o){if(!e[0].isIntersecting)return;o.disconnect();var now=Date.now(),d=Math.max(0,(window.__rq||0)-now);window.__rq=now+d+1700;setTimeout(function(){me.classList.add("vis")},200+d);setTimeout(function(){ai.classList.add("vis");c.classList.add("ftyping")},900+d);setTimeout(function(){c.classList.remove("ftyping");c.classList.add("writing");var i=0;(function w(){a.textContent=t.slice(0,++i);if(i<t.length)setTimeout(w,18+Math.random()*22);else setTimeout(function(){c.classList.remove("writing")},900)})()},2100+d)},{threshold:.55}).observe(c)})})</script><script>(function(f){document.readyState!="loading"?f():addEventListener("DOMContentLoaded",f)})(function(){var k=document.querySelector(".skyline");if(!k)return;new IntersectionObserver(function(e,o){if(!e[0].isIntersecting)return;o.disconnect();k.classList.add("in");k.querySelectorAll("b[data-to]").forEach(function(b){var to=+b.dataset.to,pre=b.dataset.pre,t0=performance.now(),loc=document.documentElement.lang=="fr"?"fr-FR":"en-US";(function f(n){var u=Math.min(1,(n-t0)/1600),v=Math.round(to*(1-Math.pow(1-u,3)));b.textContent=pre+v.toLocaleString(loc).replace(/ /g," ");if(u<1)requestAnimationFrame(f)})(t0)})},{threshold:.35}).observe(k)})</script><script>(function(f){document.readyState=="complete"?f():addEventListener("load",f)})(function(){var p=document.querySelector(".photo.scanfx");if(!p||matchMedia("(prefers-reduced-motion:reduce)").matches)return;if(innerWidth>1000)p.classList.add("armed");var run=false,T=[];
 p.classList.add("chat-js");var ms=[].slice.call(p.querySelectorAll(".fchat .msg:not(.typ)")),ty=p.querySelector(".fchat .typ");
 function chat(){ms.forEach(function(m){m.classList.remove("shown")});var t=600;ms.forEach(function(m){if(!m.classList.contains("me")){T.push(setTimeout(function(){ty.classList.add("on")},t));t+=900}else t+=500;T.push(setTimeout(function(){ty.classList.remove("on");m.classList.add("shown")},t));t+=m.classList.contains("me")?900:1100});return t}
 function cyc(){p.classList.remove("s1","s2","s3","s4");ms.forEach(function(m){m.classList.remove("shown")});T=[setTimeout(function(){p.classList.add("s1")},300),setTimeout(function(){p.classList.add("s2")},1000),setTimeout(function(){p.classList.remove("s2");p.classList.add("s3")},3300),setTimeout(function(){p.classList.add("s4")},4300),setTimeout(function(){p.classList.remove("s1","s3");var d=chat();T.push(setTimeout(function(){p.classList.remove("s4")},d+3500));T.push(setTimeout(function(){if(run)cyc()},d+4500))},4900)]}
@@ -854,6 +877,20 @@ def skyline(t):
         stats+=f'<div class="spin" style="left:{ax/W*100:.2f}%;bottom:calc(var(--sh)*{(H-ay)/H:.3f})"><div class="sbub"><span class="sq">{qr_svg(len(b),True)}</span><div><b{cnt}>{a}</b><small>{b}</small></div></div><i></i></div>'
     return f'<div class="skyline" aria-label="{" · ".join(a+" "+b for a,b in t["trust"])}">{sk}{stats}</div>'
 
+def demo_box(t,c,q):
+    fr=t["lang"]=="fr"
+    a1=("On commence par l'essentiel : vos équipements critiques et vos 8 contrats. En quelques jours, on étiquette (QR ou NFC), on connecte vos logiciels, et les agents IA se mettent au travail." if fr else
+        "We start with what matters: your critical assets and your 8 contracts. Within days we tag (QR or NFC), connect your software, and the AI agents get to work.")
+    a2=("On cale 30 minutes avec un expert pour cadrer votre parc ?" if fr else "Shall we book 30 minutes with an expert to scope your portfolio?")
+    online="en ligne" if fr else "online"
+    ph="Écrivez ou parlez…" if fr else "Type or speak…"
+    rdv=t["cta"]
+    msgs=[("ai",c["hello"]),("me",q),("ai",a1),("ai",a2)]
+    m="".join(f'<div class="bubble {w}" data-t="{html.escape(x)}">{x}</div>' for w,x in msgs)
+    return (f'<div class="dbox rv" id="dbox"><div class="dhd"><span class="dav">{I("spark")}</span><div><b>Facilia</b><small><i></i>{online}</small></div></div>'
+            f'<div class="dmsgs">{m}<div class="bubble ai dtyp"><i></i><i></i><i></i></div><a class="btn dcta" href="contact.html#rdv" data-rdv>{rdv} {I("arrow")}</a></div>'
+            f'<div class="dbar"><div class="dinput"><span class="dtxt" data-ph="{ph}"></span><span class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div><span class="dmic">{I("mic")}</span><span class="dsend">{I("arrow")}</span></div></div>')
+
 def home(t):
     u=UI[t["lang"]]; pre = "../" if t["prefix"] else ""
     kpis="".join(f'<div class="kpi"><b>{a}</b><span>{b}</span></div>' for a,b in t["kpis"])
@@ -880,7 +917,7 @@ def home(t):
 <section class="soft"><div class="wrap"><div class="kicker">{t["results_kicker"]}</div><h2>{t["results_h2"]}</h2><p class="lead">{t["results_p"]}</p><div class="results" style="margin-top:36px">{results}</div></div></section>
 <section id="secteurs"><div class="wrap"><div class="kicker">{t["sectors_kicker"]}</div><h2>{t["sectors_h2"]}</h2><div class="sectors" style="margin-top:36px">{secs}</div></div></section>
 <section class="soft"><div class="wrap chatteaser"><div><div class="kicker">{t["chat_kicker"]}</div><h2>{t["chat_h2"]}</h2><p class="lead">{t["chat_p"]}</p><a class="btn" href="#" data-chat>{I("spark")} {t["cta_chat"]}</a></div>
-<div class="demo rv"><div class="bubble ai">{c["hello"]}</div><div class="bubble me">{demo_q}</div><div class="bubble ai">{c["demo"][1][1]}</div></div></div></section>
+{demo_box(t,c,demo_q)}</div></section>
 {about_block(t,pre)}
 {final_cta(t)}'''
     return shell(t, t["meta_title"], t["meta_desc"], body, "index.html", "index.html")
