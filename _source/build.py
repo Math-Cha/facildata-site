@@ -9,9 +9,32 @@ DOMAIN = "https://facildata.com"
 FORM_TO = "contact@facildata.com"
 HUBSPOT = "https://meetings-eu1.hubspot.com/dora-facildata/gitex?uuid=48e4abde-2577-4fd7-ac58-deb46a9888b6"
 CHAT_ENDPOINT = os.environ.get("CHAT_ENDPOINT", "https://facilia-chat.mathieu-chaplain.workers.dev/")   # URL du worker Cloudflare ; vide = mode démo
-OUT = "dist"
+OUT = os.environ.get("FD_OUT","dist")
+QR_FLOAT = os.environ.get("FD_QRFLOAT","1")=="1"
 
-CSS = r"""nav a{white-space:nowrap}
+CSS = r""".hero.fx .uicard{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(255,255,255,.93),rgba(255,255,255,.8) 65%,rgba(255,255,255,.87));backdrop-filter:blur(20px) saturate(180%) brightness(1.15);-webkit-backdrop-filter:blur(20px) saturate(180%) brightness(1.15);border:1px solid rgba(255,255,255,.75);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(255,255,255,.4),inset 0 0 20px rgba(255,255,255,.35),0 22px 55px rgba(0,0,0,.32)}
+.hero.fx .uicard:before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 70% at 10% -15%,rgba(255,255,255,.95),rgba(255,255,255,0) 55%),linear-gradient(115deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.35) 50%,rgba(255,255,255,0) 60%)}
+.hero.fx .uicard>*{position:relative}
+.hero.fx .tag{background:rgba(255,241,231,.85)}.hero.fx .bar i{background:rgba(11,16,32,.08)}.hero.fx .gauge circle:first-child{stroke:rgba(11,16,32,.08)}
+.qrs svg.trails{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.qrs .trail{stroke:rgba(61,220,151,.55);stroke-width:1.5;stroke-dasharray:3 5;fill:none;transition:opacity .6s}
+.tech{position:absolute;left:0;top:0;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#3DDC97;border:2px solid #fff;box-shadow:0 0 0 0 rgba(61,220,151,.6),0 0 14px rgba(61,220,151,.9);animation:tp 1.8s ease-out infinite;will-change:transform}
+@keyframes tp{0%{box-shadow:0 0 0 0 rgba(61,220,151,.55),0 0 14px rgba(61,220,151,.9)}80%,100%{box-shadow:0 0 0 12px rgba(61,220,151,0),0 0 14px rgba(61,220,151,.9)}}
+.qf .qt{transition:border-color .4s,box-shadow .4s,background .4s}
+.qf.hit .qt{border-color:#3DDC97;background:rgba(61,220,151,.18);box-shadow:0 0 0 4px rgba(61,220,151,.18),0 8px 24px rgba(0,0,0,.25)}
+.qf b.ok{position:absolute;left:calc(100% + 10px);top:calc(var(--s)/2);transform:translate(-6px,-50%);white-space:nowrap;font-weight:700;font-size:11px;line-height:1;color:#0B1020;background:#3DDC97;padding:5px 8px;border-radius:999px;opacity:0;transition:.35s;pointer-events:none}
+.qf.hit b.ok{opacity:1;transform:translate(0,-50%)}.qf.r b.ok{left:auto;right:calc(100% + 10px);transform:translate(6px,-50%)}.qf.r.hit b.ok{transform:translate(0,-50%)}
+.qrs{position:absolute;inset:0;z-index:1;pointer-events:none}
+.qf{position:absolute;width:var(--s);transform:translate3d(calc(var(--mx,0)*var(--d)*26px),calc(var(--my,0)*var(--d)*18px),0);transition:transform .9s cubic-bezier(.2,.7,.2,1);opacity:calc(.5 + var(--d)*.45);margin-left:calc(var(--s)/-2)}
+.qt{width:var(--s);height:var(--s);padding:calc(var(--s)*.13);border-radius:calc(var(--s)*.24);background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 8px 24px rgba(0,0,0,.25);animation:qfl 7s ease-in-out infinite;animation-delay:inherit}
+.qt svg{width:100%;height:100%;display:block}
+.qf i{position:absolute;left:50%;top:calc(var(--s) + 4px);height:var(--h);border-left:1px dashed rgba(255,255,255,.35)}
+.qf i:after{content:"";position:absolute;left:-3.5px;bottom:-3px;width:6px;height:6px;border-radius:50%;background:#FFA14A;box-shadow:0 0 0 0 rgba(255,161,74,.6);animation:qp 2.6s ease-out infinite;animation-delay:inherit}
+@keyframes qfl{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes qp{0%{box-shadow:0 0 0 0 rgba(255,161,74,.6)}80%,100%{box-shadow:0 0 0 10px rgba(255,161,74,0)}}
+@media(max-width:1000px){.qrs{display:none}}
+@media(prefers-reduced-motion:reduce){.qt,.qf i:after{animation:none}.qf{transition:none}}
+nav a{white-space:nowrap}
 .about{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:start}
 .about .lead{margin-top:18px}.about .vision{margin-top:26px;padding:22px 24px;border-left:3px solid var(--o);background:var(--soft);border-radius:0 14px 14px 0;font-weight:600;color:var(--ink);font-size:1.08rem}
 .team{display:grid;gap:14px}
@@ -575,6 +598,28 @@ def gauge(v):
     r=34; c=2*3.14159*r; d=c*v/100
     return f'<svg class="gauge" viewBox="0 0 84 84"><circle cx="42" cy="42" r="{r}" fill="none" stroke="#EEECE7" stroke-width="9"/><circle cx="42" cy="42" r="{r}" fill="none" stroke="#F26B1D" stroke-width="9" stroke-linecap="round" stroke-dasharray="{d:.1f} {c:.1f}" transform="rotate(-90 42 42)"/><text x="42" y="47" text-anchor="middle" font-size="18" font-weight="800" fill="#0B1020" font-family="Plus Jakarta Sans,system-ui">{v}</text></svg>'
 
+def qr_svg(seed, orange=False):
+    import random
+    r=random.Random(seed); n=11; cells=[]
+    fin=lambda x,y:(x<3 and y<3) or (x>n-4 and y<3) or (x<3 and y>n-4)
+    for y in range(n):
+        for x in range(n):
+            if fin(x,y): continue
+            if r.random()<.45: cells.append(f'<rect x="{x}" y="{y}" width=".86" height=".86" rx=".22"/>')
+    c="#F26B1D" if orange else "#fff"
+    finders="".join(f'<rect x="{x+.35}" y="{y+.35}" width="2.3" height="2.3" rx=".7" fill="none" stroke="{c}" stroke-width=".7"/><rect x="{x+1.1}" y="{y+1.1}" width=".8" height=".8" rx=".2" fill="{c}"/>' for x,y in [(0,0),(n-3,0),(0,n-3)])
+    return f'<svg viewBox="-.5 -.5 {n+1} {n+1}"><g fill="{c}" opacity=".9">{"".join(cells)}</g>{finders}</svg>'
+
+QRS=[ # x%, y%, size px, depth, orange, stem px, mobile
+ (49,19,46,1.0,True,90,False),(52,63,36,.8,False,50,False),(61,11,30,.5,False,56,False),(76,12,40,.7,True,64,False),(89,13,30,.45,False,80,False),
+ (95,36,42,.9,False,90,True),(96,73,34,.6,True,50,True),(84,86,38,.8,False,30,False),(66,88,28,.5,True,24,False),(45,89,26,.35,False,20,False),(36,13,24,.3,False,40,False)]
+
+def qr_layer(lang='fr'):
+    if not QR_FLOAT: return ""
+    OKTXT='Intervention ✓' if lang=='fr' else 'Job done ✓'
+    items="".join(f'<div class="qf{" r" if x>=80 else ""}" style="left:{x}%;top:{y}%;--d:{d};--s:{s}px;--h:{h}px;animation-delay:-{i*1.3:.1f}s"><div class="qt">{qr_svg(i*7+3,o)}</div><i></i><b class="ok">{OKTXT}</b></div>' for i,(x,y,s,d,o,h,mb) in enumerate(QRS))
+    return f'<div class="qrs" aria-hidden="true"><svg class="trails"></svg>{items}<span class="tech"></span><span class="tech"></span><span class="tech"></span></div>'
+
 def ui_hero(u):
     return f'''<div class="ui rv">
   <div class="uicard"><span class="tag"><i></i>{u["facilia"]} · {u["alert"]}</span><h4>{u["alert_t"]}</h4><p>{u["alert_p"]}</p><span class="act">{u["plan"]} →</span></div>
@@ -596,6 +641,18 @@ def ui_sector(u, score, lines):
 </div>'''
 
 # ---------------------------------------------------------------- shell
+FX_JS = r"""<script>addEventListener("load",function(){var q=document.querySelector(".qrs");if(!q||getComputedStyle(q).display=="none"||matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+var qs=[].slice.call(q.querySelectorAll(".qf")),sv=q.querySelector("svg.trails"),NS="http://www.w3.org/2000/svg",busy={};
+function pos(f){var d=f.querySelector("i"),r=d.getBoundingClientRect(),b=q.getBoundingClientRect();return{x:r.left-b.left+.5,y:r.bottom-b.top}}
+function pick(cur){var c=qs.filter(function(f,i){return!busy[i]&&f!==cur&&f.offsetParent});return c[Math.floor(Math.random()*c.length)]}
+[].slice.call(q.querySelectorAll(".tech")).forEach(function(t,k){var line=document.createElementNS(NS,"line");line.setAttribute("class","trail");line.style.opacity=0;sv.appendChild(line);
+ var cur=qs[(k*4)%qs.length],p=pos(cur);t.style.transform="translate("+p.x+"px,"+p.y+"px)";
+ function go(){var nx=pick(cur);if(!nx){setTimeout(go,800);return}var i=qs.indexOf(nx);busy[i]=1;var a=pos(cur),st=performance.now(),b0=pos(nx),dist=Math.hypot(b0.x-a.x,b0.y-a.y),dur=Math.max(1800,dist/70*1000);
+  line.setAttribute("x1",a.x);line.setAttribute("y1",a.y);line.style.opacity=1;
+  (function step(now){var u=Math.min(1,(now-st)/dur),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2,b=pos(nx),x=a.x+(b.x-a.x)*e,y=a.y+(b.y-a.y)*e;t.style.transform="translate("+x+"px,"+y+"px)";line.setAttribute("x2",b.x);line.setAttribute("y2",b.y);
+   if(u<1)requestAnimationFrame(step);else{line.style.opacity=0;nx.classList.add("hit");setTimeout(function(){nx.classList.remove("hit");busy[i]=0;cur=nx;setTimeout(go,400+Math.random()*900)},2400)}})(st)}
+ setTimeout(go,600+k*1500)})})</script><script>addEventListener("DOMContentLoaded",function(){var h=document.querySelector(".hero"),q=document.querySelector(".qrs");if(!h||!q||matchMedia("(prefers-reduced-motion:reduce)").matches)return;h.addEventListener("mousemove",function(e){var r=h.getBoundingClientRect();q.style.setProperty("--mx",((e.clientX-r.left)/r.width-.5)*2);q.style.setProperty("--my",((e.clientY-r.top)/r.height-.5)*2)});h.addEventListener("mouseleave",function(){q.style.setProperty("--mx",0);q.style.setProperty("--my",0)})})</script>"""
+
 GEO_JS = """<script>(function(){try{var L=document.documentElement.lang,K="fd_lang",ls=window.localStorage,FR=["FR","MC","GP","MQ","GF","RE","YT","PM","BL","MF","WF","PF","NC"];
 if(/bot|crawl|spider|slurp|lighthouse|preview/i.test(navigator.userAgent))return;
 function go(t){if(t===L)return;var a=document.querySelector('link[hreflang="'+t+'"]');if(a)location.replace(a.href+location.hash)}
@@ -616,7 +673,7 @@ def shell(t, title, desc, body, path, canonical_other, extra_head="", light_top=
     return f'''<!DOCTYPE html>
 <html lang="{t["lang"]}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)}</title><meta name="description" content="{html.escape(desc)}">
-<link rel="canonical" href="{canon}"><link rel="alternate" hreflang="fr" href="{alt_fr}"><link rel="alternate" hreflang="en" href="{alt_en}">{GEO_JS}
+<link rel="canonical" href="{canon}"><link rel="alternate" hreflang="fr" href="{alt_fr}"><link rel="alternate" hreflang="en" href="{alt_en}">{GEO_JS}{FX_JS if QR_FLOAT else ''}
 <meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}"><meta property="og:type" content="website"><meta property="og:image" content="{DOMAIN}/img/hero.jpg">
 <link rel="icon" href="{pre}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -703,7 +760,7 @@ def home(t):
     c=t["chat"]
     demo_q = "Nous avons 120 bâtiments et 8 prestataires. Par où on commence ?" if t["lang"]=="fr" else "We have 120 buildings and 8 contractors. Where do we start?"
     body=f'''
-<div class="hero"><div class="bg" style="background-image:url({pre}img/hero.jpg)"></div><div class="wrap"><div><div class="kicker">{t["hero_kicker"]}</div><h1>{t["hero_h1"]}</h1><p class="lead">{t["hero_p"]}</p>
+<div class="hero{" fx" if QR_FLOAT else ""}"><div class="bg" style="background-image:url({pre}img/hero.jpg)"></div>{qr_layer(t["lang"])}<div class="wrap"><div><div class="kicker">{t["hero_kicker"]}</div><h1>{t["hero_h1"]}</h1><p class="lead">{t["hero_p"]}</p>
 <div class="cta"><a class="btn" href="contact.html#rdv" data-rdv>{t["cta"]} {I("arrow")}</a><a class="btn outline" href="#" data-chat>{I("spark")} {t["cta_chat"]}</a></div>
 <div class="kpis">{kpis}</div></div>{ui_hero(u)}</div></div>
 {video_block(t,pre)}
