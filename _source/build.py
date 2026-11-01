@@ -11,8 +11,31 @@ HUBSPOT = "https://meetings-eu1.hubspot.com/dora-facildata/gitex?uuid=48e4abde-2
 CHAT_ENDPOINT = os.environ.get("CHAT_ENDPOINT", "https://facilia-chat.mathieu-chaplain.workers.dev/")   # URL du worker Cloudflare ; vide = mode démo
 OUT = os.environ.get("FD_OUT","dist")
 QR_FLOAT = os.environ.get("FD_QRFLOAT","1")=="1"
+SCAN_FX = os.environ.get("FD_SCANFX","0")=="1"
 
-CSS = r""".hero.fx .uicard{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(255,255,255,.93),rgba(255,255,255,.8) 65%,rgba(255,255,255,.87));backdrop-filter:blur(20px) saturate(180%) brightness(1.15);-webkit-backdrop-filter:blur(20px) saturate(180%) brightness(1.15);border:1px solid rgba(255,255,255,.75);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(255,255,255,.4),inset 0 0 20px rgba(255,255,255,.35),0 22px 55px rgba(0,0,0,.32)}
+CSS = r""".rico{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:14px;background:#FFF1E7;color:var(--o);margin-bottom:14px;transition:.3s}.rico svg{width:24px;height:24px}.result:hover .rico{background:var(--o);color:#fff}
+.scanzone{position:absolute;left:0;right:0;top:0;aspect-ratio:4/3;pointer-events:none;z-index:1}
+.ret{position:absolute;left:23.4%;top:30.5%;width:12%;aspect-ratio:1;transform:translate(-50%,-50%) scale(1.9);opacity:0;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.ret i{position:absolute;width:28%;height:28%;border:3px solid #FF8A3D;filter:drop-shadow(0 0 6px rgba(255,138,61,.8));transition:border-color .3s}
+.ret i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0;border-radius:8px 0 0 0}.ret i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0;border-radius:0 8px 0 0}
+.ret i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0;border-radius:0 0 0 8px}.ret i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0;border-radius:0 0 8px 0}
+.laser{position:absolute;left:8%;right:8%;top:10%;height:2px;background:linear-gradient(90deg,transparent,#FF8A3D,transparent);box-shadow:0 0 10px 2px rgba(255,138,61,.7);opacity:0}
+.ripple{position:absolute;inset:-10%;border-radius:14px;border:2px solid #3DDC97;opacity:0}
+.det{position:absolute;left:31%;top:30.5%;transform:translate(0,-50%) translateX(-6px);background:#3DDC97;color:#0B1020;font-size:12px;font-weight:800;padding:6px 10px;border-radius:999px;white-space:nowrap;opacity:0;transition:.35s;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.scanfx.s1 .ret{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.scanfx.s2 .laser{animation:lz 1.1s ease-in-out 2;opacity:1}
+@keyframes lz{0%{top:10%}50%{top:88%}100%{top:10%}}
+.scanfx.s3 .ret i{border-color:#3DDC97;filter:drop-shadow(0 0 8px rgba(61,220,151,.9))}.scanfx.s3 .ripple{animation:rp .9s ease-out}.scanfx.s3 .det{opacity:1;transform:translate(0,-50%)}
+@keyframes rp{0%{opacity:.9;transform:scale(.8)}100%{opacity:0;transform:scale(1.6)}}
+.scanfx .uicard{background:linear-gradient(135deg,rgba(255,255,255,.93),rgba(255,255,255,.8) 65%,rgba(255,255,255,.87));backdrop-filter:blur(18px) saturate(180%) brightness(1.15);-webkit-backdrop-filter:blur(18px) saturate(180%) brightness(1.15);border:1px solid rgba(255,255,255,.75);box-shadow:inset 0 1px 0 #fff,0 22px 55px rgba(0,0,0,.28)}
+.scanfx.armed .uicard{opacity:0;transform:translateY(18px) scale(.96);transition:opacity .5s,transform .6s cubic-bezier(.2,.8,.2,1)}
+.scanfx.armed .uicard>*{opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s}
+.scanfx.armed.s4 .uicard{opacity:1;transform:none}
+.scanfx.armed.s4 .uicard>*{opacity:1;transform:none}
+.scanfx.armed.s4 .uicard>*:nth-child(2){transition-delay:.15s}.scanfx.armed.s4 .uicard>*:nth-child(3){transition-delay:.3s}.scanfx.armed.s4 .uicard>*:nth-child(4){transition-delay:.5s}.scanfx.armed.s4 .uicard>*:nth-child(5){transition-delay:.65s}
+.scanfx.s4 .det{opacity:0}
+@media(max-width:1000px){.det{font-size:11px;padding:5px 8px}}
+.hero.fx .uicard{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(255,255,255,.93),rgba(255,255,255,.8) 65%,rgba(255,255,255,.87));backdrop-filter:blur(20px) saturate(180%) brightness(1.15);-webkit-backdrop-filter:blur(20px) saturate(180%) brightness(1.15);border:1px solid rgba(255,255,255,.75);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(255,255,255,.4),inset 0 0 20px rgba(255,255,255,.35),0 22px 55px rgba(0,0,0,.32)}
 .hero.fx .uicard:before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 70% at 10% -15%,rgba(255,255,255,.95),rgba(255,255,255,0) 55%),linear-gradient(115deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.35) 50%,rgba(255,255,255,0) 60%)}
 .hero.fx .uicard>*{position:relative}
 .hero.fx .tag{background:rgba(255,241,231,.85)}.hero.fx .bar i{background:rgba(11,16,32,.08)}.hero.fx .gauge circle:first-child{stroke:rgba(11,16,32,.08)}
@@ -630,6 +653,10 @@ def ui_hero(u):
   <div class="uicard"><span class="tag"><i></i>{u["facilia"]} · {u["contract"]}</span><p>{u["contract_p"]}</p><span class="pill ok">{u["ok"]}</span></div>
 </div>'''
 
+def scan_layer(lang):
+    lab="QR détecté" if lang=="fr" else "QR detected"
+    return f'<div class="scanzone" aria-hidden="true"><div class="ret"><i></i><i></i><i></i><i></i><span class="laser"></span><span class="ripple"></span></div><b class="det">{lab} ✓</b></div>'
+
 def ui_photo_card(u):
     return f'<div class="uicard"><span class="tag">{u["scan"]}</span><h4>{u["equip"]}</h4><p>{u["equip_p"]}</p><span class="pill ok">{u["ok"]}</span><span class="pill warn">{u["due"]}</span></div>'
 
@@ -641,7 +668,9 @@ def ui_sector(u, score, lines):
 </div>'''
 
 # ---------------------------------------------------------------- shell
-FX_JS = r"""<script>addEventListener("load",function(){var q=document.querySelector(".qrs");if(!q||getComputedStyle(q).display=="none"||matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+FX_JS = r"""<script>addEventListener("load",function(){var p=document.querySelector(".photo.scanfx");if(!p||matchMedia("(prefers-reduced-motion:reduce)").matches)return;if(innerWidth>1000)p.classList.add("armed");var run=false,T=[];
+function cyc(){p.classList.remove("s1","s2","s3","s4");T=[setTimeout(function(){p.classList.add("s1")},300),setTimeout(function(){p.classList.add("s2")},1000),setTimeout(function(){p.classList.remove("s2");p.classList.add("s3")},3300),setTimeout(function(){p.classList.add("s4")},4300),setTimeout(function(){p.classList.remove("s1","s3")},5200),setTimeout(function(){p.classList.remove("s4")},10200),setTimeout(function(){if(run)cyc()},11200)]}
+new IntersectionObserver(function(e){var v=e[0].isIntersecting;if(v&&!run){run=true;cyc()}else if(!v&&run){run=false;T.forEach(clearTimeout);p.classList.remove("s1","s2","s3");p.classList.add("s4")}},{threshold:.4}).observe(p)})</script><script>addEventListener("load",function(){var q=document.querySelector(".qrs");if(!q||getComputedStyle(q).display=="none"||matchMedia("(prefers-reduced-motion:reduce)").matches)return;
 var qs=[].slice.call(q.querySelectorAll(".qf")),sv=q.querySelector("svg.trails"),NS="http://www.w3.org/2000/svg",busy={};
 function pos(f){var d=f.querySelector("i"),r=d.getBoundingClientRect(),b=q.getBoundingClientRect();return{x:r.left-b.left+.5,y:r.bottom-b.top}}
 function pick(cur){var c=qs.filter(function(f,i){return!busy[i]&&f!==cur&&f.offsetParent});return c[Math.floor(Math.random()*c.length)]}
@@ -754,7 +783,7 @@ def home(t):
     agents="".join(f'<div class="agent rv"><span class="dot"></span><div class="ico">{I(ic)}</div><h3>{a}</h3><p>{b}</p></div>' for (a,b),ic in zip(t["agents"],["contract","eye","cal","gauge","star","chart"]))
     deploy="".join(f'<div>{"<div class=ico>"+I(ic)+"</div>"}<div><b>{a}</b><p>{b}</p></div></div>' for (a,b),ic in zip(t["deploy"],["qr","cloud","plug","users"]))
     roles="".join(f'<div class="role rv"><div class="ico">{I(ic)}</div><h3>{a}</h3><p>{b}</p><div class="conv"><div class="bubble me">{q}</div><div class="bubble ai"><span class="tag" style="margin:0 0 6px"><i></i>Facilia</span><br>{r}</div></div></div>' for (a,b,q,r),ic in zip(t["roles"],["star","users","wrench"]))
-    results="".join(f'<div class="result rv"><span class="kicker" style="margin-bottom:6px">{a}</span><h3>{n}<small>{l}</small></h3><p>{b}</p></div>' for a,n,l,b in t["results"])
+    results="".join(f'<div class="result rv"><span class="rico" role="img" aria-label="{a}">{I(ic)}</span><h3>{n}<small>{l}</small></h3><p>{b}</p></div>' for (a,n,l,b),ic in zip(t["results"],["euro","clock","star"]))
     trust="".join(f'<div class="kpi"><b>{a}</b><span>{b}</span></div>' for a,b in t["trust"])
     secs="".join(f'<a class="sector rv" href="{s["file"]}"><div class="bg" style="background-image:url({pre}img/{s["img"]})"></div><div class="n">{s["num"]}</div><h3>{s["title"]}</h3><p>{s["card"]}</p><span>{t["more"]} {I("arrow")}</span></a>' for s in t["sectors"].values())
     c=t["chat"]
@@ -767,7 +796,7 @@ def home(t):
 <section class="tight"><div class="wrap"><div class="kicker">{t["who_kicker"]}</div><h2>{t["who_h2"]}</h2><div class="who" style="margin-top:32px">{who}</div><div class="kpis trust">{trust}</div></div></section>
 <section class="soft" id="besoins"><div class="wrap"><div class="kicker">{t["needs_kicker"]}</div><h2>{t["needs_h2"]}</h2><div class="needs" style="margin-top:40px">{needs}</div></div></section>
 <section class="dark" id="agents"><div class="wrap"><div class="kicker">{t["agents_kicker"]}</div><h2>{t["agents_h2"]}</h2><p class="lead">{t["agents_p"]}</p><div class="agents" style="margin-top:44px">{agents}</div></div></section>
-<section><div class="wrap grid2"><div class="photo rv"><img src="{pre}img/scan.jpg" alt="" loading="lazy">{ui_photo_card(u)}</div><div><div class="kicker">{t["deploy_kicker"]}</div><h2>{t["deploy_h2"]}</h2><p class="lead">{t["deploy_p"]}</p><div class="list" style="margin-top:28px">{deploy}</div></div></div></section>
+<section><div class="wrap grid2"><div class="photo rv{" scanfx" if SCAN_FX else ""}"><img src="{pre}img/scan.jpg" alt="" loading="lazy">{scan_layer(t["lang"]) if SCAN_FX else ""}{ui_photo_card(u)}</div><div><div class="kicker">{t["deploy_kicker"]}</div><h2>{t["deploy_h2"]}</h2><p class="lead">{t["deploy_p"]}</p><div class="list" style="margin-top:28px">{deploy}</div></div></div></section>
 <section><div class="wrap"><div class="kicker">{t["roles_kicker"]}</div><h2>{t["roles_h2"]}</h2><p class="lead">{t["roles_p"]}</p><div class="roles" style="margin-top:40px">{roles}</div></div></section>
 <section class="soft"><div class="wrap"><div class="kicker">{t["results_kicker"]}</div><h2>{t["results_h2"]}</h2><p class="lead">{t["results_p"]}</p><div class="results" style="margin-top:36px">{results}</div></div></section>
 <section id="secteurs"><div class="wrap"><div class="kicker">{t["sectors_kicker"]}</div><h2>{t["sectors_h2"]}</h2><div class="sectors" style="margin-top:36px">{secs}</div></div></section>
