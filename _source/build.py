@@ -11,17 +11,17 @@ HUBSPOT = "https://meetings-eu1.hubspot.com/dora-facildata/gitex?uuid=48e4abde-2
 CHAT_ENDPOINT = os.environ.get("CHAT_ENDPOINT", "https://facilia-chat.mathieu-chaplain.workers.dev/")   # URL du worker Cloudflare ; vide = mode démo
 OUT = os.environ.get("FD_OUT","dist")
 QR_FLOAT = os.environ.get("FD_QRFLOAT","1")=="1"
-SCAN_FX = os.environ.get("FD_SCANFX","0")=="1"
+SCAN_FX = os.environ.get("FD_SCANFX","1")=="1"
 
 CSS = r""".rico{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:14px;background:#FFF1E7;color:var(--o);margin-bottom:14px;transition:.3s}.rico svg{width:24px;height:24px}.result:hover .rico{background:var(--o);color:#fff}
 .scanzone{position:absolute;left:0;right:0;top:0;aspect-ratio:4/3;pointer-events:none;z-index:1}
-.ret{position:absolute;left:23.4%;top:30.5%;width:12%;aspect-ratio:1;transform:translate(-50%,-50%) scale(1.9);opacity:0;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.ret{position:absolute;left:24.2%;top:31.5%;width:12%;aspect-ratio:1;transform:translate(-50%,-50%) scale(1.9);opacity:0;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
 .ret i{position:absolute;width:28%;height:28%;border:3px solid #FF8A3D;filter:drop-shadow(0 0 6px rgba(255,138,61,.8));transition:border-color .3s}
 .ret i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0;border-radius:8px 0 0 0}.ret i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0;border-radius:0 8px 0 0}
 .ret i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0;border-radius:0 0 0 8px}.ret i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0;border-radius:0 0 8px 0}
 .laser{position:absolute;left:8%;right:8%;top:10%;height:2px;background:linear-gradient(90deg,transparent,#FF8A3D,transparent);box-shadow:0 0 10px 2px rgba(255,138,61,.7);opacity:0}
 .ripple{position:absolute;inset:-10%;border-radius:14px;border:2px solid #3DDC97;opacity:0}
-.det{position:absolute;left:31%;top:30.5%;transform:translate(0,-50%) translateX(-6px);background:#3DDC97;color:#0B1020;font-size:12px;font-weight:800;padding:6px 10px;border-radius:999px;white-space:nowrap;opacity:0;transition:.35s;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.det{position:absolute;left:32%;top:31.5%;transform:translate(0,-50%) translateX(-6px);background:#3DDC97;color:#0B1020;font-size:12px;font-weight:800;padding:6px 10px;border-radius:999px;white-space:nowrap;opacity:0;transition:.35s;box-shadow:0 8px 20px rgba(0,0,0,.25)}
 .scanfx.s1 .ret{opacity:1;transform:translate(-50%,-50%) scale(1)}
 .scanfx.s2 .laser{animation:lz 1.1s ease-in-out 2;opacity:1}
 @keyframes lz{0%{top:10%}50%{top:88%}100%{top:10%}}
@@ -41,7 +41,7 @@ CSS = r""".rico{display:inline-flex;align-items:center;justify-content:center;wi
 .hero.fx .tag{background:rgba(255,241,231,.85)}.hero.fx .bar i{background:rgba(11,16,32,.08)}.hero.fx .gauge circle:first-child{stroke:rgba(11,16,32,.08)}
 .qrs svg.trails{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .qrs .trail{stroke:rgba(61,220,151,.55);stroke-width:1.5;stroke-dasharray:3 5;fill:none;transition:opacity .6s}
-.tech{position:absolute;left:0;top:0;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#3DDC97;border:2px solid #fff;box-shadow:0 0 0 0 rgba(61,220,151,.6),0 0 14px rgba(61,220,151,.9);animation:tp 1.8s ease-out infinite;will-change:transform}
+.tech{position:absolute;left:0;top:0;width:15px;height:15px;margin:-7.5px 0 0 -7.5px;z-index:2;border-radius:50%;background:#3DDC97;border:2px solid #fff;box-shadow:0 0 0 0 rgba(61,220,151,.6),0 0 14px rgba(61,220,151,.9);animation:tp 1.8s ease-out infinite;will-change:transform}
 @keyframes tp{0%{box-shadow:0 0 0 0 rgba(61,220,151,.55),0 0 14px rgba(61,220,151,.9)}80%,100%{box-shadow:0 0 0 12px rgba(61,220,151,0),0 0 14px rgba(61,220,151,.9)}}
 .qf .qt{transition:border-color .4s,box-shadow .4s,background .4s}
 .qf.hit .qt{border-color:#3DDC97;background:rgba(61,220,151,.18);box-shadow:0 0 0 4px rgba(61,220,151,.18),0 8px 24px rgba(0,0,0,.25)}
@@ -785,7 +785,7 @@ def home(t):
     roles="".join(f'<div class="role rv"><div class="ico">{I(ic)}</div><h3>{a}</h3><p>{b}</p><div class="conv"><div class="bubble me">{q}</div><div class="bubble ai"><span class="tag" style="margin:0 0 6px"><i></i>Facilia</span><br>{r}</div></div></div>' for (a,b,q,r),ic in zip(t["roles"],["star","users","wrench"]))
     results="".join(f'<div class="result rv"><span class="rico" role="img" aria-label="{a}">{I(ic)}</span><h3>{n}<small>{l}</small></h3><p>{b}</p></div>' for (a,n,l,b),ic in zip(t["results"],["euro","clock","star"]))
     trust="".join(f'<div class="kpi"><b>{a}</b><span>{b}</span></div>' for a,b in t["trust"])
-    secs="".join(f'<a class="sector rv" href="{s["file"]}"><div class="bg" style="background-image:url({pre}img/{s["img"]})"></div><div class="n">{s["num"]}</div><h3>{s["title"]}</h3><p>{s["card"]}</p><span>{t["more"]} {I("arrow")}</span></a>' for s in t["sectors"].values())
+    secs="".join(f'<a class="sector rv" href="{s["file"]}"><div class="bg" style="background-image:url({pre}img/{s["img"]})"></div><h3>{s["title"]}</h3><p>{s["card"]}</p><span>{t["more"]} {I("arrow")}</span></a>' for s in t["sectors"].values())
     c=t["chat"]
     demo_q = "Nous avons 120 bâtiments et 8 prestataires. Par où on commence ?" if t["lang"]=="fr" else "We have 120 buildings and 8 contractors. Where do we start?"
     body=f'''
@@ -813,7 +813,7 @@ def sector(t, key, other_file):
     pains="".join(f'<div class="card rv"><div class="ico">{I(ic)}</div><h3>{a}</h3><p>{b}</p></div>' for (a,b),ic in zip(s["pains"],["pin","shield","chart"]))
     do="".join(f'<div class="card rv"><div class="ico">{I(ic)}</div><h3>{a}</h3><p>{b}</p></div>' for (a,b),ic in zip(s["do"],["qr","cal","gauge","contract"]))
     body=f'''
-<div class="phero"><div class="bg" style="background-image:url({pre}img/{s["img"]})"></div><div class="wrap"><div class="n">{s["num"]} — {s["title"].upper()}</div><h1>{s["h1"]}</h1><p class="lead">{s["p"]}</p><div class="cta" style="margin-top:22px;display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="contact.html#rdv" data-rdv>{t["cta"]} {I("arrow")}</a><a class="btn outline" href="#" data-chat>{I("spark")} {t["cta_chat"]}</a></div></div></div>
+<div class="phero"><div class="bg" style="background-image:url({pre}img/{s["img"]})"></div><div class="wrap"><div class="n">{s["title"].upper()}</div><h1>{s["h1"]}</h1><p class="lead">{s["p"]}</p><div class="cta" style="margin-top:22px;display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="contact.html#rdv" data-rdv>{t["cta"]} {I("arrow")}</a><a class="btn outline" href="#" data-chat>{I("spark")} {t["cta_chat"]}</a></div></div></div>
 <section><div class="wrap"><h2>{s["pains_h2"]}</h2><div class="grid3" style="margin-top:32px">{pains}</div></div></section>
 <section class="soft"><div class="wrap grid2"><div><h2>{s["do_h2"]}</h2><div class="grid2" style="gap:18px;margin-top:28px">{do}</div></div>{ui_sector(u,sc,lines)}</div></section>
 <section><div class="wrap"><div class="case rv"><b>{s["case_h2"]}</b><p>{s["case"]}</p></div></div></section>
