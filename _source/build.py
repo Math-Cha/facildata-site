@@ -641,7 +641,7 @@ def about_block(t,pre):
         p=("Facildata est née sur le terrain, dans une entreprise de maintenance multitechnique. Chaque jour, on y voyait des équipements oubliés, des contrats mal suivis et des heures perdues à chercher l'information. "
            "Nos fondateurs viennent du BTP, de l'énergie et des grands chantiers. Ils ont construit l'outil qu'ils auraient voulu avoir.")
         vis="Notre vision : que chaque bâtiment et chaque équipement ait une voix, pour que les gestionnaires pilotent au lieu de courir."
-        team=[("MC","Mathieu CHAPLAIN","Cofondateur & CEO · ex-BTP et énergie"),("DB","Dora Bourguiba","Cofondatrice · Développement")]
+        team=[("MC","Mathieu CHAPLAIN","Cofondateur & CEO · ex-BTP et énergie"),("DB","Dora BOURGUIBA","Cofondatrice · Développement")]
         facts=[("2021","création"),("Paris · Bordeaux","implantations"),("IA","française et responsable")]
         bk="Ils nous accompagnent"
         labels=["Lauréat","Référencé · cartographie 2026","Accompagnement","Airbus Développement","Accompagnement","Groupe Action Logement","Membre · annuaire","Portrait d'entreprise","Accompagnement"]
@@ -651,7 +651,7 @@ def about_block(t,pre):
         p=("Facildata was born in the field, inside a multi-technical maintenance company. Every day we saw forgotten equipment, poorly tracked contracts and hours lost looking for information. "
            "Our founders come from construction, energy and major infrastructure projects. They built the tool they wished they had.")
         vis="Our vision: give every building and every piece of equipment a voice, so managers can steer instead of chase."
-        team=[("MC","Mathieu CHAPLAIN","Co-founder & CEO · construction and energy background"),("DB","Dora Bourguiba","Co-founder · Business development")]
+        team=[("MC","Mathieu CHAPLAIN","Co-founder & CEO · construction and energy background"),("DB","Dora BOURGUIBA","Co-founder · Business development")]
         facts=[("2021","founded"),("Paris · Bordeaux","offices"),("AI","French and responsible")]
         bk="They support us"
         labels=["Award winner","Listed · 2026 AI map","Support","Airbus Développement","Support","Action Logement group","Member · directory","Company profile","Support"]
