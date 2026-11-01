@@ -25,7 +25,7 @@
 .sbub b{display:block;font-size:1.7rem;font-weight:800;color:var(--o);letter-spacing:-.02em;line-height:1}.sbub small{display:block;color:var(--mute);font-size:.82rem;font-weight:600;margin-top:4px}
 #besoins{padding-top:40px}
 @media(max-width:700px){.skyline{--sh:140px;height:250px}.sbub{flex-direction:column;gap:6px;padding:10px;text-align:center;border-radius:14px}.sbub .sq{width:28px;height:28px;padding:4px}.sbub b{font-size:1.05rem}.sbub small{font-size:.66rem;white-space:normal;max-width:84px}.spin i{height:28px}}
-.rico{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:14px;background:#FFF1E7;color:var(--o);margin-bottom:14px;transition:.3s}.rico svg{width:24px;height:24px}.result:hover .rico{background:var(--o);color:#fff}
+.rhead{display:flex;align-items:center;gap:14px;margin-bottom:10px}.rhead h3{margin:0!important}.rlab{display:block;color:var(--ink);font-size:1rem;margin-bottom:10px}.rico{display:inline-flex;align-items:center;justify-content:center;flex:none;width:52px;height:52px;border-radius:14px;background:#FFF1E7;color:var(--o);transition:.3s}.rico svg{width:24px;height:24px}.result:hover .rico{background:var(--o);color:#fff}
 .scanzone{position:absolute;left:0;right:0;top:0;aspect-ratio:4/3;pointer-events:none;z-index:1}
 .ret{position:absolute;left:24.2%;top:31.5%;width:12%;aspect-ratio:1;transform:translate(-50%,-50%) scale(1.9);opacity:0;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
 .ret i{position:absolute;width:28%;height:28%;border:3px solid #FF8A3D;filter:drop-shadow(0 0 6px rgba(255,138,61,.8));transition:border-color .3s}
