@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Générateur du site facildata.com — statique, FR + EN. python3 -I build.py → dist/
 Contenu : content.py. Images : img/*.jpg. Chat Facilia : assets/chat.js (+ worker/)."""
-import os, shutil, html, sys, json
+import re, os, shutil, html, sys, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from content import T, UI
 
@@ -12,8 +12,36 @@ CHAT_ENDPOINT = os.environ.get("CHAT_ENDPOINT", "https://facilia-chat.mathieu-ch
 OUT = os.environ.get("FD_OUT","dist")
 QR_FLOAT = os.environ.get("FD_QRFLOAT","1")=="1"
 SCAN_FX = os.environ.get("FD_SCANFX","1")=="1"
+SKYLINE = os.environ.get("FD_SKYLINE","1")=="1"
 
-CSS = r""".rico{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:14px;background:#FFF1E7;color:var(--o);margin-bottom:14px;transition:.3s}.rico svg{width:24px;height:24px}.result:hover .rico{background:var(--o);color:#fff}
+CSS = r""".role .dots{display:none}.role .dots i{display:inline-block;width:6px;height:6px;margin:6px 2px 0;border-radius:50%;background:var(--o);opacity:.5;animation:ty 1s infinite}.role .dots i:nth-child(2){animation-delay:.2s}.role .dots i:nth-child(3){animation-delay:.4s}
+.conv.anim .bubble{opacity:0;transform:translateY(8px);transition:.4s cubic-bezier(.2,.8,.2,1)}.conv.anim .bubble.vis{opacity:1;transform:none}
+.conv.anim.typing .dots{display:inline-block}.conv.anim .ans:after{content:"";display:inline-block;width:2px;height:1em;background:var(--o);margin-left:2px;vertical-align:-2px;opacity:0}.conv.anim.writing .ans:after{opacity:1;animation:cur .8s steps(2) infinite}
+@keyframes cur{50%{opacity:0}}
+.chatcard .sub{font-size:.78rem;color:var(--mute);display:flex;align-items:center;gap:6px;margin-top:2px}.chatcard .sub .live{width:7px;height:7px;border-radius:50%;background:#3DDC97;box-shadow:0 0 0 3px rgba(61,220,151,.25)}
+.fchat{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.msg{max-width:90%;padding:7px 11px;border-radius:13px;font-size:.78rem;line-height:1.35;animation:mpop .35s cubic-bezier(.2,.8,.2,1)}
+.msg.ai{align-self:flex-start;background:#FFF1E7;color:var(--ink);border-bottom-left-radius:4px}
+.msg.me{align-self:flex-end;background:var(--ink);color:#fff;border-bottom-right-radius:4px}
+.msg.ok{align-self:flex-start;background:#E8F7EE;color:#1E7B46;font-weight:700;border-bottom-left-radius:4px}
+.msg.typ{display:none;padding:9px 12px}.msg.typ i{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:var(--o);opacity:.5;animation:ty 1s infinite}.msg.typ i:nth-child(2){animation-delay:.2s}.msg.typ i:nth-child(3){animation-delay:.4s}
+@keyframes mpop{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
+.chat-js .fchat .msg:not(.typ){display:none}.chat-js .fchat .msg.shown{display:block}.chat-js .fchat .msg.typ.on{display:block}
+.photo .chatcard{max-width:380px}@media(max-width:1000px){.chat-js .fchat{min-height:215px;justify-content:flex-start}}
+.qrs.live .tech{opacity:1}
+.skyline{--sh:200px;position:relative;height:310px;background:#fff;overflow:hidden}
+.skyline .sky{position:absolute;left:0;right:0;bottom:0;width:100%;height:var(--sh);fill:var(--soft)}.skyline .sky .hi{fill:#EFEAE2}
+.skyline .win{fill:#F26B1D;opacity:.18}
+.spin{position:absolute;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;z-index:2}
+.spin i{display:block;height:46px;border-left:1.5px dashed rgba(242,107,29,.55);position:relative}
+.spin i:after{content:"";position:absolute;left:-5px;bottom:-4px;width:8px;height:8px;border-radius:50%;background:var(--o);animation:qp 2.4s ease-out infinite}
+.sbub{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px;padding:12px 18px 12px 12px;box-shadow:0 18px 40px rgba(11,16,32,.10);white-space:nowrap;transform:translateY(16px);opacity:0;transition:.7s cubic-bezier(.2,.8,.2,1)}
+.skyline.in .sbub{transform:none;opacity:1}.skyline.in .spin:nth-of-type(2) .sbub{transition-delay:.15s}.skyline.in .spin:nth-of-type(3) .sbub{transition-delay:.3s}
+.sbub .sq{width:40px;height:40px;border-radius:11px;background:#FFF1E7;padding:7px;flex:none}.sbub .sq svg{width:100%;height:100%}
+.sbub b{display:block;font-size:1.7rem;font-weight:800;color:var(--o);letter-spacing:-.02em;line-height:1}.sbub small{display:block;color:var(--mute);font-size:.82rem;font-weight:600;margin-top:4px}
+#besoins{padding-top:40px}
+@media(max-width:700px){.skyline{--sh:140px;height:250px}.sbub{flex-direction:column;gap:6px;padding:10px;text-align:center;border-radius:14px}.sbub .sq{width:28px;height:28px;padding:4px}.sbub b{font-size:1.05rem}.sbub small{font-size:.66rem;white-space:normal;max-width:84px}.spin i{height:28px}}
+.rico{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:14px;background:#FFF1E7;color:var(--o);margin-bottom:14px;transition:.3s}.rico svg{width:24px;height:24px}.result:hover .rico{background:var(--o);color:#fff}
 .scanzone{position:absolute;left:0;right:0;top:0;aspect-ratio:4/3;pointer-events:none;z-index:1}
 .ret{position:absolute;left:24.2%;top:31.5%;width:12%;aspect-ratio:1;transform:translate(-50%,-50%) scale(1.9);opacity:0;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .4s}
 .ret i{position:absolute;width:28%;height:28%;border:3px solid #FF8A3D;filter:drop-shadow(0 0 6px rgba(255,138,61,.8));transition:border-color .3s}
@@ -41,7 +69,7 @@ CSS = r""".rico{display:inline-flex;align-items:center;justify-content:center;wi
 .hero.fx .tag{background:rgba(255,241,231,.85)}.hero.fx .bar i{background:rgba(11,16,32,.08)}.hero.fx .gauge circle:first-child{stroke:rgba(11,16,32,.08)}
 .qrs svg.trails{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .qrs .trail{stroke:rgba(61,220,151,.55);stroke-width:1.5;stroke-dasharray:3 5;fill:none;transition:opacity .6s}
-.tech{position:absolute;left:0;top:0;width:15px;height:15px;margin:-7.5px 0 0 -7.5px;z-index:2;border-radius:50%;background:#3DDC97;border:2px solid #fff;box-shadow:0 0 0 0 rgba(61,220,151,.6),0 0 14px rgba(61,220,151,.9);animation:tp 1.8s ease-out infinite;will-change:transform}
+.tech{opacity:0;transition:opacity .5s;position:absolute;left:0;top:0;width:15px;height:15px;margin:-7.5px 0 0 -7.5px;z-index:2;border-radius:50%;background:#3DDC97;border:2px solid #fff;box-shadow:0 0 0 0 rgba(61,220,151,.6),0 0 14px rgba(61,220,151,.9);animation:tp 1.8s ease-out infinite;will-change:transform}
 @keyframes tp{0%{box-shadow:0 0 0 0 rgba(61,220,151,.55),0 0 14px rgba(61,220,151,.9)}80%,100%{box-shadow:0 0 0 12px rgba(61,220,151,0),0 0 14px rgba(61,220,151,.9)}}
 .qf .qt{transition:border-color .4s,box-shadow .4s,background .4s}
 .qf.hit .qt{border-color:#3DDC97;background:rgba(61,220,151,.18);box-shadow:0 0 0 4px rgba(61,220,151,.18),0 8px 24px rgba(0,0,0,.25)}
@@ -657,6 +685,16 @@ def scan_layer(lang):
     lab="QR détecté" if lang=="fr" else "QR detected"
     return f'<div class="scanzone" aria-hidden="true"><div class="ret"><i></i><i></i><i></i><i></i><span class="laser"></span><span class="ripple"></span></div><b class="det">{lab} ✓</b></div>'
 
+def ui_photo_chat(u, lang):
+    fr=lang=="fr"
+    msgs=[("ai","Bonjour, je suis la CTA-02. Mon filtre F7 est encrassé à 82 %." if fr else "Hi, I'm AHU-02. My F7 filter is 82% clogged."),
+          ("ai","Je recommande de le remplacer jeudi : la pièce est en stock." if fr else "I recommend replacing it Thursday: the part is in stock."),
+          ("me","OK, on planifie." if fr else "OK, let's schedule it."),
+          ("ok","Intervention planifiée jeudi 9h ✓ PV pré-rempli." if fr else "Job scheduled Thursday 9am ✓ report pre-filled.")]
+    m="".join(f'<div class="msg {w}">{t}</div>' for w,t in msgs)
+    via="via Facilia" if fr else "via Facilia"
+    return f'<div class="uicard chatcard"><span class="tag"><i></i>{u["scan"]} · Facilia</span><h4>{u["equip"]}</h4><p class="sub"><span class="live"></span>{"L’équipement vous parle" if fr else "Your equipment talks to you"} · {via}</p><div class="fchat">{m}<div class="msg ai typ"><i></i><i></i><i></i></div></div></div>'
+
 def ui_photo_card(u):
     return f'<div class="uicard"><span class="tag">{u["scan"]}</span><h4>{u["equip"]}</h4><p>{u["equip_p"]}</p><span class="pill ok">{u["ok"]}</span><span class="pill warn">{u["due"]}</span></div>'
 
@@ -668,9 +706,12 @@ def ui_sector(u, score, lines):
 </div>'''
 
 # ---------------------------------------------------------------- shell
-FX_JS = r"""<script>addEventListener("load",function(){var p=document.querySelector(".photo.scanfx");if(!p||matchMedia("(prefers-reduced-motion:reduce)").matches)return;if(innerWidth>1000)p.classList.add("armed");var run=false,T=[];
-function cyc(){p.classList.remove("s1","s2","s3","s4");T=[setTimeout(function(){p.classList.add("s1")},300),setTimeout(function(){p.classList.add("s2")},1000),setTimeout(function(){p.classList.remove("s2");p.classList.add("s3")},3300),setTimeout(function(){p.classList.add("s4")},4300),setTimeout(function(){p.classList.remove("s1","s3")},5200),setTimeout(function(){p.classList.remove("s4")},10200),setTimeout(function(){if(run)cyc()},11200)]}
-new IntersectionObserver(function(e){var v=e[0].isIntersecting;if(v&&!run){run=true;cyc()}else if(!v&&run){run=false;T.forEach(clearTimeout);p.classList.remove("s1","s2","s3");p.classList.add("s4")}},{threshold:.4}).observe(p)})</script><script>addEventListener("load",function(){var q=document.querySelector(".qrs");if(!q||getComputedStyle(q).display=="none"||matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+FX_JS = r"""<script>(function(f){document.readyState!="loading"?f():addEventListener("DOMContentLoaded",f)})(function(){if(matchMedia("(prefers-reduced-motion:reduce)").matches||!window.IntersectionObserver)return;[].slice.call(document.querySelectorAll(".role .conv")).forEach(function(c){var me=c.querySelector(".bubble.me"),ai=c.querySelector(".bubble.ai"),a=c.querySelector(".ans"),t=a.getAttribute("data-t");c.classList.add("anim");a.textContent="";
+new IntersectionObserver(function(e,o){if(!e[0].isIntersecting)return;o.disconnect();var now=Date.now(),d=Math.max(0,(window.__rq||0)-now);window.__rq=now+d+1700;setTimeout(function(){me.classList.add("vis")},200+d);setTimeout(function(){ai.classList.add("vis");c.classList.add("typing")},900+d);setTimeout(function(){c.classList.remove("typing");c.classList.add("writing");var i=0;(function w(){a.textContent=t.slice(0,++i);if(i<t.length)setTimeout(w,18+Math.random()*22);else setTimeout(function(){c.classList.remove("writing")},900)})()},2100+d)},{threshold:.55}).observe(c)})})</script><script>(function(f){document.readyState!="loading"?f():addEventListener("DOMContentLoaded",f)})(function(){var k=document.querySelector(".skyline");if(!k)return;new IntersectionObserver(function(e,o){if(!e[0].isIntersecting)return;o.disconnect();k.classList.add("in");k.querySelectorAll("b[data-to]").forEach(function(b){var to=+b.dataset.to,pre=b.dataset.pre,t0=performance.now(),loc=document.documentElement.lang=="fr"?"fr-FR":"en-US";(function f(n){var u=Math.min(1,(n-t0)/1600),v=Math.round(to*(1-Math.pow(1-u,3)));b.textContent=pre+v.toLocaleString(loc).replace(/ /g," ");if(u<1)requestAnimationFrame(f)})(t0)})},{threshold:.35}).observe(k)})</script><script>(function(f){document.readyState=="complete"?f():addEventListener("load",f)})(function(){var p=document.querySelector(".photo.scanfx");if(!p||matchMedia("(prefers-reduced-motion:reduce)").matches)return;if(innerWidth>1000)p.classList.add("armed");var run=false,T=[];
+p.classList.add("chat-js");var ms=[].slice.call(p.querySelectorAll(".fchat .msg:not(.typ)")),ty=p.querySelector(".fchat .typ");
+function chat(){ms.forEach(function(m){m.classList.remove("shown")});var t=600;ms.forEach(function(m){if(!m.classList.contains("me")){T.push(setTimeout(function(){ty.classList.add("on")},t));t+=900}else t+=500;T.push(setTimeout(function(){ty.classList.remove("on");m.classList.add("shown")},t));t+=m.classList.contains("me")?900:1100});return t}
+function cyc(){p.classList.remove("s1","s2","s3","s4");ms.forEach(function(m){m.classList.remove("shown")});T=[setTimeout(function(){p.classList.add("s1")},300),setTimeout(function(){p.classList.add("s2")},1000),setTimeout(function(){p.classList.remove("s2");p.classList.add("s3")},3300),setTimeout(function(){p.classList.add("s4")},4300),setTimeout(function(){p.classList.remove("s1","s3");var d=chat();T.push(setTimeout(function(){p.classList.remove("s4")},d+3500));T.push(setTimeout(function(){if(run)cyc()},d+4500))},4900)]}
+new IntersectionObserver(function(e){var v=e[0].isIntersecting;if(v&&!run){run=true;cyc()}else if(!v&&run){run=false;T.forEach(clearTimeout);p.classList.remove("s1","s2","s3");p.classList.add("s4");ty.classList.remove("on");ms.forEach(function(m){m.classList.add("shown")})}},{threshold:.4}).observe(p)})</script><script>(function(){var started=0;function init(){var q=document.querySelector(".qrs");if(started||!q||getComputedStyle(q).display=="none"||matchMedia("(prefers-reduced-motion:reduce)").matches)return;started=1;q.classList.add("live");
 var qs=[].slice.call(q.querySelectorAll(".qf")),sv=q.querySelector("svg.trails"),NS="http://www.w3.org/2000/svg",busy={};
 function pos(f){var d=f.querySelector("i"),r=d.getBoundingClientRect(),b=q.getBoundingClientRect();return{x:r.left-b.left+.5,y:r.bottom-b.top}}
 function pick(cur){var c=qs.filter(function(f,i){return!busy[i]&&f!==cur&&f.offsetParent});return c[Math.floor(Math.random()*c.length)]}
@@ -680,7 +721,7 @@ function pick(cur){var c=qs.filter(function(f,i){return!busy[i]&&f!==cur&&f.offs
   line.setAttribute("x1",a.x);line.setAttribute("y1",a.y);line.style.opacity=1;
   (function step(now){var u=Math.min(1,(now-st)/dur),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2,b=pos(nx),x=a.x+(b.x-a.x)*e,y=a.y+(b.y-a.y)*e;t.style.transform="translate("+x+"px,"+y+"px)";line.setAttribute("x2",b.x);line.setAttribute("y2",b.y);
    if(u<1)requestAnimationFrame(step);else{line.style.opacity=0;nx.classList.add("hit");setTimeout(function(){nx.classList.remove("hit");busy[i]=0;cur=nx;setTimeout(go,400+Math.random()*900)},2400)}})(st)}
- setTimeout(go,600+k*1500)})})</script><script>addEventListener("DOMContentLoaded",function(){var h=document.querySelector(".hero"),q=document.querySelector(".qrs");if(!h||!q||matchMedia("(prefers-reduced-motion:reduce)").matches)return;h.addEventListener("mousemove",function(e){var r=h.getBoundingClientRect();q.style.setProperty("--mx",((e.clientX-r.left)/r.width-.5)*2);q.style.setProperty("--my",((e.clientY-r.top)/r.height-.5)*2)});h.addEventListener("mouseleave",function(){q.style.setProperty("--mx",0);q.style.setProperty("--my",0)})})</script>"""
+ setTimeout(go,600+k*1500)})}if(document.readyState=="complete")init();else addEventListener("load",init);addEventListener("resize",init)})()</script><script>addEventListener("DOMContentLoaded",function(){var h=document.querySelector(".hero"),q=document.querySelector(".qrs");if(!h||!q||matchMedia("(prefers-reduced-motion:reduce)").matches)return;h.addEventListener("mousemove",function(e){var r=h.getBoundingClientRect();q.style.setProperty("--mx",((e.clientX-r.left)/r.width-.5)*2);q.style.setProperty("--my",((e.clientY-r.top)/r.height-.5)*2)});h.addEventListener("mouseleave",function(){q.style.setProperty("--mx",0);q.style.setProperty("--my",0)})})</script>"""
 
 GEO_JS = """<script>(function(){try{var L=document.documentElement.lang,K="fd_lang",ls=window.localStorage,FR=["FR","MC","GP","MQ","GF","RE","YT","PM","BL","MF","WF","PF","NC"];
 if(/bot|crawl|spider|slurp|lighthouse|preview/i.test(navigator.userAgent))return;
@@ -775,6 +816,43 @@ def about_block(t,pre):
 <div class="team">{mates}<div class="facts rv">{fct}</div></div></div>
 <div class="backers"><h3>{bk}</h3><div class="logos">{logos}</div>{press}</div></div></section>'''
 
+def skyline(t):
+    import random
+    r=random.Random(7); W=1440; H=200; parts=[]; win=[]; hip=[]; done=set()
+    x=0; tall={0.2:150,0.5:175,0.8:155}; anchors=[]
+    while x<W:
+        w=r.randint(34,78); h=r.randint(40,110); gap=r.randint(0,6)
+        hi=False
+        for f,th in tall.items():
+            if x<=f*W<x+w+gap+40 and f not in done:
+                w=56; x=int(f*W-28); h=th; anchors.append((x+w/2,H-h)); hi=True; done.add(f)
+        kind=.5 if hi else r.random()
+        y=H-h
+        if hi:
+            hip.append(f'M{x},{H}V{y}H{x+w}V{H}Z')
+            for wy in range(int(y)+16,H-10,16):
+                for wx in range(x+8,x+w-8,12):
+                    if r.random()<.22: win.append(f'<rect x="{wx}" y="{wy}" width="5" height="7" rx="1"/>')
+            x+=w+gap; continue
+        if kind<.15:  # toit pointu
+            parts.append(f'M{x},{H}V{y+14}L{x+w/2},{y}L{x+w},{y+14}V{H}Z')
+        elif kind<.25:  # antenne
+            parts.append(f'M{x},{H}V{y}H{x+w}V{H}Z M{x+w/2-1},{y}v-16h2v16Z')
+        else:
+            parts.append(f'M{x},{H}V{y}H{x+w}V{H}Z')
+        for wy in range(int(y)+12,H-10,16):
+            for wx in range(x+8,x+w-8,12):
+                if r.random()<.16: win.append(f'<rect x="{wx}" y="{wy}" width="5" height="7" rx="1"/>')
+        x+=w+gap
+    # stade
+    sk=f'<svg class="sky" viewBox="0 0 {W} {H}" preserveAspectRatio="none"><path d="{" ".join(parts)}"/><path class="hi" d="{" ".join(hip)}"/><g class="win">{"".join(win)}</g></svg>'
+    stats=""
+    for (a,b),(ax,ay) in zip(t["trust"],sorted(anchors)):
+        num=re.sub(r"[^0-9]","",a)
+        cnt=f' data-to="{num}" data-pre="{a[0] if a[0] in "+" else ""}"' if a.startswith("+") else ""
+        stats+=f'<div class="spin" style="left:{ax/W*100:.2f}%;bottom:calc(var(--sh)*{(H-ay)/H:.3f})"><div class="sbub"><span class="sq">{qr_svg(len(b),True)}</span><div><b{cnt}>{a}</b><small>{b}</small></div></div><i></i></div>'
+    return f'<div class="skyline" aria-label="{" · ".join(a+" "+b for a,b in t["trust"])}">{sk}{stats}</div>'
+
 def home(t):
     u=UI[t["lang"]]; pre = "../" if t["prefix"] else ""
     kpis="".join(f'<div class="kpi"><b>{a}</b><span>{b}</span></div>' for a,b in t["kpis"])
@@ -782,7 +860,7 @@ def home(t):
     needs="".join(f'<div class="need rv"><b>0{i}</b><h3>{a}</h3><p>{b}</p></div>' for i,(a,b) in enumerate(t["needs"],1))
     agents="".join(f'<div class="agent rv"><span class="dot"></span><div class="ico">{I(ic)}</div><h3>{a}</h3><p>{b}</p></div>' for (a,b),ic in zip(t["agents"],["contract","eye","cal","gauge","star","chart"]))
     deploy="".join(f'<div>{"<div class=ico>"+I(ic)+"</div>"}<div><b>{a}</b><p>{b}</p></div></div>' for (a,b),ic in zip(t["deploy"],["qr","cloud","plug","users"]))
-    roles="".join(f'<div class="role rv"><div class="ico">{I(ic)}</div><h3>{a}</h3><p>{b}</p><div class="conv"><div class="bubble me">{q}</div><div class="bubble ai"><span class="tag" style="margin:0 0 6px"><i></i>Facilia</span><br>{r}</div></div></div>' for (a,b,q,r),ic in zip(t["roles"],["star","users","wrench"]))
+    roles="".join(f'<div class="role rv"><div class="ico">{I(ic)}</div><h3>{a}</h3><p>{b}</p><div class="conv"><div class="bubble me">{q}</div><div class="bubble ai"><span class="tag" style="margin:0 0 6px"><i></i>Facilia</span><br><span class="ans" data-t="{html.escape(r)}">{r}</span><span class="dots"><i></i><i></i><i></i></span></div></div></div>' for (a,b,q,r),ic in zip(t["roles"],["star","users","wrench"]))
     results="".join(f'<div class="result rv"><span class="rico" role="img" aria-label="{a}">{I(ic)}</span><h3>{n}<small>{l}</small></h3><p>{b}</p></div>' for (a,n,l,b),ic in zip(t["results"],["euro","clock","star"]))
     trust="".join(f'<div class="kpi"><b>{a}</b><span>{b}</span></div>' for a,b in t["trust"])
     secs="".join(f'<a class="sector rv" href="{s["file"]}"><div class="bg" style="background-image:url({pre}img/{s["img"]})"></div><h3>{s["title"]}</h3><p>{s["card"]}</p><span>{t["more"]} {I("arrow")}</span></a>' for s in t["sectors"].values())
@@ -793,10 +871,10 @@ def home(t):
 <div class="cta"><a class="btn" href="contact.html#rdv" data-rdv>{t["cta"]} {I("arrow")}</a><a class="btn outline" href="#" data-chat>{I("spark")} {t["cta_chat"]}</a></div>
 <div class="kpis">{kpis}</div></div>{ui_hero(u)}</div></div>
 {video_block(t,pre)}
-<section class="tight"><div class="wrap"><div class="kicker">{t["who_kicker"]}</div><h2>{t["who_h2"]}</h2><div class="who" style="margin-top:32px">{who}</div><div class="kpis trust">{trust}</div></div></section>
+<section class="tight"><div class="wrap"><div class="kicker">{t["who_kicker"]}</div><h2>{t["who_h2"]}</h2><div class="who" style="margin-top:32px">{who}</div>{"" if SKYLINE else chr(60)+'div class="kpis trust">'+trust+chr(60)+"/div>"}</div></section>{skyline(t) if SKYLINE else ""}
 <section class="soft" id="besoins"><div class="wrap"><div class="kicker">{t["needs_kicker"]}</div><h2>{t["needs_h2"]}</h2><div class="needs" style="margin-top:40px">{needs}</div></div></section>
 <section class="dark" id="agents"><div class="wrap"><div class="kicker">{t["agents_kicker"]}</div><h2>{t["agents_h2"]}</h2><p class="lead">{t["agents_p"]}</p><div class="agents" style="margin-top:44px">{agents}</div></div></section>
-<section><div class="wrap grid2"><div class="photo rv{" scanfx" if SCAN_FX else ""}"><img src="{pre}img/scan.jpg" alt="" loading="lazy">{scan_layer(t["lang"]) if SCAN_FX else ""}{ui_photo_card(u)}</div><div><div class="kicker">{t["deploy_kicker"]}</div><h2>{t["deploy_h2"]}</h2><p class="lead">{t["deploy_p"]}</p><div class="list" style="margin-top:28px">{deploy}</div></div></div></section>
+<section><div class="wrap grid2"><div class="photo rv{" scanfx" if SCAN_FX else ""}"><img src="{pre}img/scan.jpg" alt="" loading="lazy">{scan_layer(t["lang"]) if SCAN_FX else ""}{ui_photo_chat(u,t["lang"]) if SCAN_FX else ui_photo_card(u)}</div><div><div class="kicker">{t["deploy_kicker"]}</div><h2>{t["deploy_h2"]}</h2><p class="lead">{t["deploy_p"]}</p><div class="list" style="margin-top:28px">{deploy}</div></div></div></section>
 <section><div class="wrap"><div class="kicker">{t["roles_kicker"]}</div><h2>{t["roles_h2"]}</h2><p class="lead">{t["roles_p"]}</p><div class="roles" style="margin-top:40px">{roles}</div></div></section>
 <section class="soft"><div class="wrap"><div class="kicker">{t["results_kicker"]}</div><h2>{t["results_h2"]}</h2><p class="lead">{t["results_p"]}</p><div class="results" style="margin-top:36px">{results}</div></div></section>
 <section id="secteurs"><div class="wrap"><div class="kicker">{t["sectors_kicker"]}</div><h2>{t["sectors_h2"]}</h2><div class="sectors" style="margin-top:36px">{secs}</div></div></section>
