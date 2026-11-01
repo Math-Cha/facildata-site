@@ -101,6 +101,8 @@ export default {
     if (req.method !== 'POST' || !okOrigin) return json({ error: 'forbidden' }, cors, 403);
 
     let body; try { body = await req.json(); } catch { return json({ error: 'bad' }, cors, 400); }
+    // langue par défaut : pays du visiteur (fourni par Cloudflare), sans stockage ni appel IA
+    if (body && body.geo === true) return json({ c: (req.cf && req.cf.country) || '' }, cors);
     const lang = body.lang === 'en' ? 'en' : 'fr';
 
     // limitation : par IP (10 min) et plafond quotidien global (protège le budget API)
