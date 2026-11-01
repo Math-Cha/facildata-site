@@ -26,9 +26,10 @@ CSS = r"""nav a{white-space:nowrap}
 .logos a:hover{border-color:var(--ink);transform:translateY(-4px);box-shadow:0 18px 40px rgba(11,16,32,.08)}
 .logos img{max-height:64px;max-width:80%;width:auto;object-fit:contain}
 .logos img[src*="airbus"]{max-height:40px}.logos img[src*="cobas"],.logos img[src*="french-tech"]{max-height:84px}.logos small{font-size:.78rem;font-weight:700;color:var(--mute);text-align:center}
-.press{display:flex;align-items:center;gap:24px;margin:28px auto 0;max-width:760px;border-radius:18px;padding:18px 24px;background:var(--soft);transition:.25s}.press:hover{background:#FDEBDD}
+.presses{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}.ces{flex:none;height:44px;padding:0 14px;border-radius:12px;background:var(--ink);color:#fff;font-weight:800;display:flex;align-items:center;gap:6px;letter-spacing:.02em}.ces em{font-style:normal;color:var(--o2)}
+.press{display:flex;align-items:center;gap:24px;border-radius:18px;padding:18px 24px;background:var(--soft);transition:.25s}.press:hover{background:#FDEBDD}
 .press img{height:44px;width:auto}.press p{margin:0;color:var(--ink);font-weight:600}.press p span{display:block;color:var(--mute);font-weight:500;font-size:.88rem}
-@media(max-width:1000px){.about{grid-template-columns:1fr;gap:32px}.logos{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1000px){.presses{grid-template-columns:1fr}.about{grid-template-columns:1fr;gap:32px}.logos{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.logos a{min-height:120px;padding:20px 12px 14px}.logos img{max-height:48px}.press{flex-direction:column;align-items:flex-start;gap:12px}.facts b{font-size:1.1rem}}
 .vsec{position:relative;background:linear-gradient(180deg,var(--ink) 0 46%,#fff 46%);padding:0 0 70px}
 .vsec .wrap{max-width:1040px}
@@ -666,7 +667,11 @@ def about_block(t,pre):
         inner=f'{logo}<small>{lab}</small>'
         return f'<a class="rv" href="{href}" target="_blank" rel="noopener">{inner}</a>' if href else f'<a class="rv" role="img" aria-label="{alt}" style="cursor:default">{inner}</a>'
     logos="".join(card(f,a,h,l) for (f,a,h),l in zip(L,labels))
-    press=f'<a class="press rv" href="https://www.placeco.fr/nouvelle-aquitaine/strategie/article/proptech-facildata-dope-a-lia-le-carnet-de-sante-des-batiments-9359" target="_blank" rel="noopener"><img src="{pre}img/partners/placeco.png" alt="Placéco" loading="lazy"><p>{press_t}<span>{press_s}</span></p></a>'
+    ces_t,ces_s=(("CES Las Vegas 2026","Délégation Région Nouvelle-Aquitaine · exposant TeamNAqui") if fr else ("CES Las Vegas 2026","Nouvelle-Aquitaine Region delegation · TeamNAqui exhibitor"))
+    press=('<div class="presses">'
+      f'<a class="press rv" href="https://www.placeco.fr/nouvelle-aquitaine/strategie/article/proptech-facildata-dope-a-lia-le-carnet-de-sante-des-batiments-9359" target="_blank" rel="noopener"><img src="{pre}img/partners/placeco.png" alt="Placéco" loading="lazy"><p>{press_t}<span>{press_s}</span></p></a>'
+      f'<a class="press rv" href="https://entreprises.nouvelle-aquitaine.fr/agenda/ces-las-vegas" target="_blank" rel="noopener"><span class="ces">CES<em>2026</em></span><p>{ces_t}<span>{ces_s}</span></p></a>'
+      '</div>')
     return f'''<section id="equipe"><div class="wrap"><div class="about"><div><div class="kicker">{k}</div><h2>{h2}</h2><p class="lead">{p}</p><div class="vision rv">{vis}</div></div>
 <div class="team">{mates}<div class="facts rv">{fct}</div></div></div>
 <div class="backers"><h3>{bk}</h3><div class="logos">{logos}</div>{press}</div></div></section>'''
