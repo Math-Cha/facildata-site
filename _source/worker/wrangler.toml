@@ -1,0 +1,5 @@
+name = "facilia-chat"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+[vars]
+ALLOWED_ORIGIN = "https://facildata.com,https://www.facildata.com"
