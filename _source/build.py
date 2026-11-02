@@ -100,7 +100,7 @@ CSS = r""".dbox{background:#fff;border:1px solid var(--line);border-radius:22px;
 .qf i:after{content:"";position:absolute;left:-3.5px;bottom:-3px;width:6px;height:6px;border-radius:50%;background:#FFA14A;box-shadow:0 0 0 0 rgba(255,161,74,.6);animation:qp 2.6s ease-out infinite;animation-delay:inherit}
 @keyframes qfl{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @keyframes qp{0%{box-shadow:0 0 0 0 rgba(255,161,74,.6)}80%,100%{box-shadow:0 0 0 10px rgba(255,161,74,0)}}
-@media(max-width:1000px){.qrs{opacity:.6}.qf{scale:.62}.qf:nth-of-type(3),.qf:nth-of-type(10),.qf:nth-of-type(11){display:none}.qf b.ok{font-size:10px;padding:4px 7px}.tech{scale:.8}.qrs .trail{stroke-width:1.2}}
+@media(max-width:1000px){.qrs{opacity:.6}.qf{scale:.62}.qf:nth-of-type(3),.qf:nth-of-type(10),.qf:nth-of-type(11){display:none}.qf b.ok{font-size:10px;padding:4px 7px}.tech{width:12px;height:12px;margin:-6px 0 0 -6px}.qrs .trail{stroke-width:1.2}}
 @media(prefers-reduced-motion:reduce){.qt,.qf i:after{animation:none}.qf{transition:none}}
 nav a{white-space:nowrap}
 .about{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:start}
