@@ -738,6 +738,7 @@ function cyc(){p.classList.remove("s1","s2","s3","s4");ms.forEach(function(m){m.
 new IntersectionObserver(function(e){var v=e[0].isIntersecting;if(v&&!run){run=true;cyc()}else if(!v&&run){run=false;T.forEach(clearTimeout);p.classList.remove("s1","s2","s3");p.classList.add("s4");ty.classList.remove("on");ms.forEach(function(m){m.classList.add("shown")})}},{threshold:.4}).observe(p)})</script><script>(function(){var started=0;function init(){var q=document.querySelector(".qrs");if(started||!q||getComputedStyle(q).display=="none"||matchMedia("(prefers-reduced-motion:reduce)").matches)return;started=1;q.classList.add("live");
 var qs=[].slice.call(q.querySelectorAll(".qf")),sv=q.querySelector("svg.trails"),NS="http://www.w3.org/2000/svg",busy={};
 function pos(f){var d=f.querySelector("i"),r=d.getBoundingClientRect(),b=q.getBoundingClientRect();return{x:r.left-b.left+.5,y:r.bottom-b.top}}
+function fit(){var h=q.parentNode.getBoundingClientRect(),W=h.width,H=h.height,sc=Math.max(W/2882,H/1592),ih=1592*sc,minY=(H-ih)*.6+ih*.3;qs.forEach(function(f){var st=f.querySelector("i");if(!f.dataset.h0)f.dataset.h0=parseFloat(f.style.getPropertyValue("--h"))||40;f.style.setProperty("--h",f.dataset.h0+"px");var cur=+f.dataset.h0,rh=st.getBoundingClientRect().height||1,fac=rh/cur,p=pos(f);if(p.y<minY)f.style.setProperty("--h",(cur+(minY-p.y)/fac).toFixed(1)+"px")})}fit();addEventListener("resize",fit);
 function pick(cur){var c=qs.filter(function(f,i){return!busy[i]&&f!==cur&&f.offsetParent});return c[Math.floor(Math.random()*c.length)]}
 [].slice.call(q.querySelectorAll(".tech")).forEach(function(t,k){var line=document.createElementNS(NS,"line");line.setAttribute("class","trail");line.style.opacity=0;sv.appendChild(line);
  var cur=qs[(k*4)%qs.length],p=pos(cur);t.style.transform="translate("+p.x+"px,"+p.y+"px)";
@@ -753,6 +754,11 @@ function go(t){if(t===L)return;var a=document.querySelector('link[hreflang="'+t+
 document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a.lang");if(a)try{ls.setItem(K,L==="fr"?"en":"fr")}catch(_){}});
 var p=ls.getItem(K);if(p){go(p);return}
 fetch("__EP__",{method:"POST",headers:{"Content-Type":"application/json"},body:'{"geo":true}'}).then(function(r){return r.json()}).then(function(j){if(!j||!j.c)return;var t=FR.indexOf(j.c)>-1?"fr":"en";try{ls.setItem(K,t)}catch(_){}go(t)}).catch(function(){})}catch(_){}})();</script>""".replace("__EP__", CHAT_ENDPOINT or "")
+
+import hashlib
+VER=None
+def _ver():
+    return hashlib.md5((CSS+JS+CHAT_JS).encode()).hexdigest()[:8]
 
 def shell(t, title, desc, body, path, canonical_other, extra_head="", light_top=False):
     pre = "../" if t["prefix"] else ""
@@ -771,7 +777,7 @@ def shell(t, title, desc, body, path, canonical_other, extra_head="", light_top=
 <meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}"><meta property="og:type" content="website"><meta property="og:image" content="{DOMAIN}/img/hero.jpg">
 <link rel="icon" href="{pre}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{pre}assets/site.css">{extra_head}</head>
+<link rel="stylesheet" href="{pre}assets/site.css?v={_ver()}">{extra_head}</head>
 <body{' class="light-top"' if light_top else ''}><div id="top" style="position:absolute;top:0;left:0;width:1px;height:1px"></div>
 <header><div class="wrap hd"><a class="logo" href="{pre}{t["prefix"]}index.html">{LOGO_MARK}{t["brand"]}</a>
 <button class="burger" aria-label="menu"><span></span><span></span><span></span></button>
@@ -780,7 +786,7 @@ def shell(t, title, desc, body, path, canonical_other, extra_head="", light_top=
 {body}
 <footer><div class="wrap"><div><a class="logo" href="{pre}{t["prefix"]}index.html">{LOGO_MARK}{t["brand"]}</a><div style="margin-top:8px">{t["tagline"]} · {t["footer_sig"]}</div></div>
 <div class="links"><a href="mailto:{t["contact_mail"]}">{t["contact_mail"]}</a><a href="{pre}{t["prefix"]}contact.html">{t["contact"]}</a><a href="{pre}{t["prefix"]}mentions-legales.html">{t["legal"]}</a></div></div></footer>
-{chat_cfg}<script src="{pre}assets/site.js"></script><script src="{pre}assets/chat.js" defer></script></body></html>'''
+{chat_cfg}<script src="{pre}assets/site.js?v={_ver()}"></script><script src="{pre}assets/chat.js?v={_ver()}" defer></script></body></html>'''
 
 def final_cta(t):
     return f'<section class="final"><div class="wrap rv"><h2 style="margin:0 auto .4em">{t["final_h2"]}</h2><p class="lead">{t["final_p"]}</p><a class="btn white" href="contact.html#rdv" data-rdv>{t["cta"]} {I("arrow")}</a> <a class="btn outline" href="#" data-chat>{I("spark")} {t["cta_chat"]}</a></div></section>'
